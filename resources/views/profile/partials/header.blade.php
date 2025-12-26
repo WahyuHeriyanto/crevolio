@@ -1,22 +1,26 @@
-<div class="space-y-6">
+<div class="bg-white/90 space-y-6">
 
     {{-- COVER --}}
-    <div class="relative h-48 rounded-2xl overflow-hidden bg-gray-200">
+    <div class=" relative h-48 rounded-2xl overflow-hidden bg-gray-200">
         <img
-            src="https://picsum.photos/1200/300"
+            src="{{ $profile?->background_image 
+                ? asset('storage/' . $profile->background_image) 
+                : 'https://picsum.photos/1200/300' }}"
             class="w-full h-full object-cover"
         />
     </div>
 
     {{-- MAIN HEADER --}}
-    <div class="relative -mt-16 flex justify-between items-end gap-6 px-4">
+    <div class="bg-white/90 relative -mt-16 flex justify-between items-end gap-6 px-4">
 
         {{-- LEFT : AVATAR + INFO --}}
         <div class="flex items-end gap-6">
 
             {{-- AVATAR --}}
             <img
-                src="https://i.pravatar.cc/150"
+                src="{{ $profile?->photo_profile 
+                    ? asset('storage/' . $profile->photo_profile) 
+                    : 'https://i.pravatar.cc/150' }}"
                 class="
                     w-36 h-36
                     rounded-full
@@ -35,8 +39,25 @@
                 </h1>
 
                 <p class="text-gray-600 mt-1">
-                    Building digital products & collaborating with passionate people.
+                    {{ $profile?->description ?? 'No description yet.' }}
                 </p>
+
+                {{-- FOLLOW STATS --}}
+                <div class="flex gap-6 mt-4 text-sm text-gray-600">
+                    <div class="flex items-center gap-1">
+                        <span class="font-semibold text-black">
+                            {{ $profile?->followers ?? 0 }}
+                        </span>
+                        <span>Followers</span>
+                    </div>
+
+                    <div class="flex items-center gap-1">
+                        <span class="font-semibold text-black">
+                            {{ $profile?->following ?? 0 }}
+                        </span>
+                        <span>Following</span>
+                    </div>
+                </div>
 
                 {{-- TAGS --}}
                 <div class="flex flex-wrap gap-2 mt-3">
