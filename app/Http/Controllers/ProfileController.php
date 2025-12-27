@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Models\Project;
+use App\Models\ProjectDetail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,19 +16,32 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     public function show(string $username)
-    {
-        $user = User::with([
-            'profile.expertises.expertise',
-            'profile.tools.tool',
-            'profile.socialMedias.category',
-            ])
-        ->where('username', $username)
-        ->firstOrFail();
+{
+    $user = User::with([
+        'profile.expertises.expertise',
+        'profile.tools.tool',
+        'profile.socialMedias.category',
+    ])
+    ->where('username', $username)
+    ->firstOrFail();
 
-        return view('profile.index', [
-            'user' => $user,
-            'profile' => $user->profile,
-            'isOwner' => auth()->check() && auth()->id() === $user->id,
-        ]);
-    }
+    $projects = Project::with([
+        'detail.field',
+        'detail.status',
+        'medias',
+        'detail.tools.tool',
+        'detail.collaborators.user.profile',
+    ])
+    ->where('owner_id', $user->id)
+    ->latest()
+    ->get();
+
+    return view('profile.index', [
+        'user' => $user,
+        'profile' => $user->profile,
+        'projects' => $projects,
+        'isOwner' => auth()->check() && auth()->id() === $user->id,
+    ]);
+}
+
 }

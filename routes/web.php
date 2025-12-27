@@ -29,10 +29,29 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
 
     Route::post('/projects', [ProjectController::class, 'store'])
         ->name('projects.store');
+
+        Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])
+        ->name('projects.edit');
+
+    Route::put('/projects/{project}', [ProjectController::class, 'update'])
+        ->name('projects.update');
+
+    // Delete
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])
+        ->name('projects.destroy');
+
+    // Join project
+    Route::post('/projects/{project}/join', [ProjectController::class, 'join'])
+        ->name('projects.join');
 });
 
-require __DIR__.'/auth.php';    
+
+
+Route::get('/projects/{project}', [ProjectController::class, 'show'])
+    ->name('projects.show');
 
 Route::get('/{username}', [ProfileController::class, 'show'])
     ->where('username', '[a-zA-Z0-9_-]+')
     ->name('profile.show');
+
+require __DIR__.'/auth.php'; 

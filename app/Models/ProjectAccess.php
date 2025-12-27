@@ -16,4 +16,9 @@ class ProjectAccess extends Model
         'project_role',
         'project_detail_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'access_user_id');
+    }
 }

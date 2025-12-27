@@ -24,4 +24,20 @@ class ProjectDetail extends Model
     {
         return $this->hasMany(ProjectTool::class);
     }
+
+        public function field()
+    {
+        return $this->belongsTo(ProjectField::class, 'project_field_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(ProjectStatus::class, 'project_status_id');
+    }
+
+    public function collaborators()
+    {
+        return $this->hasMany(ProjectAccess::class, 'project_detail_id');
+    }
+
 }

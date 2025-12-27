@@ -12,10 +12,17 @@
         @include('profile.partials.tabs')
 
         {{-- PROJECTS --}}
-        <div x-show="tab === 'projects'" class="space-y-6">
-            @for ($i = 0; $i < 3; $i++)
-                @include('profile.partials.project-item')
-            @endfor
+        <div x-show="tab === 'projects'" class="flex flex-col gap-6 w-full mb-10">
+            @forelse ($projects as $project)
+                @include('profile.partials.project-item', [
+                    'project' => $project,
+                    'isOwner' => $isOwner,
+                ])
+            @empty
+                <div class="text-gray-500">
+                    No projects yet.
+                </div>
+            @endforelse
         </div>
 
         {{-- PORTFOLIOS --}}

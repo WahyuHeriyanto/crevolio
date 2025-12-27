@@ -102,4 +102,21 @@ class ProjectController extends Controller
             ->route('profile.show', auth()->user()->username)
             ->with('success', 'Project created successfully.');
     }
+
+    public function show(Project $project)
+    {
+        $project->load([
+            'detail.field',
+            'detail.status',
+            'detail.tools.tool',
+            'medias',
+            'owner',
+        ]);
+
+        return view('projects.show', [
+            'project' => $project,
+            'isOwner' => auth()->check() && auth()->id() === $project->owner_id,
+        ]);
+    }
+
 }
