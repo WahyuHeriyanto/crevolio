@@ -132,12 +132,11 @@
 
                         <a
                             x-show="tab === 'projects'"
-                            href="#"
+                            href="{{ route('projects.create') }}"
                             class="px-5 py-2 text-sm rounded-full bg-black text-white hover:bg-gray-800 transition"
                         >
                             + Create Project
                         </a>
-
                         <a
                             x-show="tab === 'portfolios'"
                             href="#"

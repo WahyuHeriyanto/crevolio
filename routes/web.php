@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 //Guest
@@ -23,6 +24,11 @@ Route::middleware(['auth', 'profile.completed.redirect'])->group(function () {
 Route::middleware(['auth', 'profile.completed'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+    Route::get('/projects/create', [ProjectController::class, 'create'])
+        ->name('projects.create');
+
+    Route::post('/projects', [ProjectController::class, 'store'])
+        ->name('projects.store');
 });
 
 require __DIR__.'/auth.php';    
