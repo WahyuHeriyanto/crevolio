@@ -30,4 +30,10 @@ class UserProfile extends Model
     {
         return $this->hasMany(UserTool::class);
     }
+
+    public function socialMedias()
+    {
+        return $this->hasMany(UserSocialMedia::class);
+    }
+
 }

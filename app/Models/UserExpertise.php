@@ -6,9 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserExpertise extends Model
 {
-        protected $fillable = [
+    protected $fillable = [
         'user_profile_id',
         'expertise_id',
         'custom_expertise'
     ];
+
+    public function expertise()
+    {
+        return $this->belongsTo(Expertise::class);
+    }
 }

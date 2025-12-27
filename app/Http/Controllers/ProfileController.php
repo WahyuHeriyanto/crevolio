@@ -15,7 +15,11 @@ class ProfileController extends Controller
 {
     public function show(string $username)
     {
-        $user = User::with('profile')
+        $user = User::with([
+            'profile.expertises.expertise',
+            'profile.tools.tool',
+            'profile.socialMedias.category',
+            ])
         ->where('username', $username)
         ->firstOrFail();
 
@@ -25,5 +29,4 @@ class ProfileController extends Controller
             'isOwner' => auth()->check() && auth()->id() === $user->id,
         ]);
     }
-
 }

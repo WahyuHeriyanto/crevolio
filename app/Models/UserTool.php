@@ -11,4 +11,9 @@ class UserTool extends Model
         'tool_id',
         'custom_tool'
     ];
+
+    public function tool()
+    {
+        return $this->belongsTo(Tool::class);
+    }
 }

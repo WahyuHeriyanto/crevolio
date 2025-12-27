@@ -1,10 +1,10 @@
 <div class="bg-white/90 space-y-6">
 
     {{-- COVER --}}
-    <div class=" relative h-48 rounded-2xl overflow-hidden bg-gray-200">
+    <div class="relative h-48 rounded-2xl overflow-hidden bg-gray-200">
         <img
-            src="{{ $profile?->background_image 
-                ? asset('storage/' . $profile->background_image) 
+            src="{{ $profile?->background_image
+                ? asset('storage/' . $profile->background_image)
                 : 'https://picsum.photos/1200/300' }}"
             class="w-full h-full object-cover"
         />
@@ -13,27 +13,20 @@
     {{-- MAIN HEADER --}}
     <div class="bg-white/90 relative -mt-16 flex justify-between items-end gap-6 px-4">
 
-        {{-- LEFT : AVATAR + INFO --}}
+        {{-- LEFT --}}
         <div class="flex items-end gap-6">
 
             {{-- AVATAR --}}
             <img
-                src="{{ $profile?->photo_profile 
-                    ? asset('storage/' . $profile->photo_profile) 
+                src="{{ $profile?->photo_profile
+                    ? asset('storage/' . $profile->photo_profile)
                     : 'https://i.pravatar.cc/150' }}"
-                class="
-                    w-36 h-36
-                    rounded-full
-                    border-4 border-white
-                    shadow-lg
-                    bg-white
-                    relative
-                    -top-10
-                "
+                class="w-36 h-36 rounded-full border-4 border-white shadow-lg bg-white relative -top-10"
             />
 
             {{-- INFO CARD --}}
             <div class="bg-white/90 backdrop-blur rounded-xl px-6 py-4 shadow-sm max-w-xl">
+
                 <h1 class="text-2xl font-semibold">
                     {{ $user->name }}
                 </h1>
@@ -50,7 +43,6 @@
                         </span>
                         <span>Followers</span>
                     </div>
-
                     <div class="flex items-center gap-1">
                         <span class="font-semibold text-black">
                             {{ $profile?->following ?? 0 }}
@@ -60,61 +52,104 @@
                 </div>
 
                 {{-- TAGS --}}
-                <div class="flex flex-wrap gap-2 mt-3">
-                    <span class="px-3 py-1 text-xs rounded-full bg-gray-100">Laravel</span>
-                    <span class="px-3 py-1 text-xs rounded-full bg-gray-100">UI/UX</span>
-                    <span class="px-3 py-1 text-xs rounded-full bg-gray-100">Product</span>
+                <div class="flex gap-4 mt-4">
+
+                    {{-- EXPERTISES --}}
+                    @php
+                        $expertises = $profile?->expertises ?? collect();
+                    @endphp
+                    <div class="flex flex-wrap gap-2">
+                        @foreach ($expertises->take(3) as $item)
+                            @if ($item->expertise)
+                                <span class="px-3 py-1 text-xs rounded-full bg-gray-100">
+                                    {{ $item->expertise->name }}
+                                </span>
+                            @endif
+                        @endforeach
+
+                        @if ($expertises->count() > 3)
+                            <span class="px-3 py-1 text-xs rounded-full bg-gray-200">
+                                +{{ $expertises->count() - 3 }}
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- TOOLS --}}
+                    @php
+                        $tools = $profile?->tools ?? collect();
+                    @endphp
+                    <div class="flex flex-wrap gap-2">
+                        @foreach ($tools->take(3) as $item)
+                            @if ($item->tool)
+                                <span class="px-3 py-1 text-xs rounded-full bg-gray-100">
+                                    {{ $item->tool->name }}
+                                </span>
+                            @endif
+                        @endforeach
+
+                        @if ($tools->count() > 3)
+                            <span class="px-3 py-1 text-xs rounded-full bg-gray-200">
+                                +{{ $tools->count() - 3 }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+                {{-- SOCIAL MEDIA --}}
+                <div class="flex gap-4 mt-4">
+                    @foreach ($profile?->socialMedias ?? [] as $social)
+                        @if ($social->category && $social->category->icon)
+                            <a
+                                href="{{ $social->link }}"
+                                target="_blank"
+                                class="hover:opacity-80 transition"
+                            >
+                                <img
+                                    src="{{ asset('storage/' . $social->category->icon) }}"
+                                    alt="{{ $social->category->name }}"
+                                    class="w-8 h-8"
+                                />
+                            </a>
+                        @endif
+                    @endforeach
                 </div>
 
-                {{-- SOCIAL --}}
-                <div class="flex gap-4 mt-4 text-gray-500">
-                    <a href="mailto:test@gmail.com" target="_blank" class="hover:text-black">✉️</a>
-                    <a href="https://instagram.com" target="_blank" class="hover:text-black">📸</a>
-                    <a href="https://linkedin.com" target="_blank" class="hover:text-black">💼</a>
-                </div>
             </div>
         </div>
 
-        {{-- RIGHT : ACTIONS --}}
-        <div class="flex items-center gap-3 mb-4 mr-6">
+            {{-- RIGHT --}}
+            <div class="flex items-center gap-3 mb-4 mr-6">
 
-            {{-- FOLLOW (only other user) --}}
-            @auth
-                @if(auth()->id() !== $user->id)
-                    <button
-                        class="px-4 py-2 text-sm rounded-full border hover:bg-gray-100 transition"
-                    >
-                        Follow
-                    </button>
-                @endif
-            @endauth
+                @auth
+                    @if(auth()->id() !== $user->id)
+                        <button class="px-4 py-2 text-sm rounded-full border hover:bg-gray-100 transition">
+                            Follow
+                        </button>
+                    @endif
+                @endauth
 
-            {{-- OWNER ACTION (1 BUTTON BASED ON TAB) --}}
-            @auth
-                @if(auth()->id() === $user->id)
+                @auth
+                    @if(auth()->id() === $user->id)
 
-                    {{-- Create Project --}}
-                    <a
-                        x-show="tab === 'projects'"
-                        href="#"
-                        class="px-5 py-2 text-sm rounded-full bg-black text-white hover:bg-gray-800 transition"
-                    >
-                        + Create Project
-                    </a>
+                        <a
+                            x-show="tab === 'projects'"
+                            href="#"
+                            class="px-5 py-2 text-sm rounded-full bg-black text-white hover:bg-gray-800 transition"
+                        >
+                            + Create Project
+                        </a>
 
-                    {{-- Add Portfolio --}}
-                    <a
-                        x-show="tab === 'portfolios'"
-                        href="#"
-                        class="px-5 py-2 text-sm rounded-full bg-black text-white hover:bg-gray-800 transition"
-                    >
-                        + Add Portfolio
-                    </a>
+                        <a
+                            x-show="tab === 'portfolios'"
+                            href="#"
+                            class="px-5 py-2 text-sm rounded-full bg-black text-white hover:bg-gray-800 transition"
+                        >
+                            + Add Portfolio
+                        </a>
 
-                @endif
-            @endauth
+                    @endif
+                @endauth
+
+            </div>
 
         </div>
-
     </div>
-</div>
