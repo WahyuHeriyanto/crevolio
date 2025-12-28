@@ -108,15 +108,24 @@ class ProjectController extends Controller
         $project->load([
             'detail.field',
             'detail.status',
+            'detail.progress',
             'detail.tools.tool',
+            'detail.collaborators.user.profile',
             'medias',
-            'owner',
+            'owner.profile',
         ]);
 
-        return view('projects.show', [
-            'project' => $project,
-            'isOwner' => auth()->check() && auth()->id() === $project->owner_id,
-        ]);
+        $user = auth()->user();
+    $isOwner = auth()->check() && $user->id === $project->owner_id;
+    
+    $isCollaborator = false;
+    if (auth()->check()) {
+        $isCollaborator = $project->detail->collaborators
+            ->where('access_user_id', $user->id)
+            ->isNotEmpty();
+    }
+
+    return view('projects.show', compact('project', 'isOwner', 'isCollaborator'));
     }
 
 }

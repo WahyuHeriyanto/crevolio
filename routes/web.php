@@ -43,15 +43,17 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
     // Join project
     Route::post('/projects/{project}/join', [ProjectController::class, 'join'])
         ->name('projects.join');
+    
+    Route::delete('/projects/{project}/leave', [ProjectController::class, 'leave'])
+        ->name('projects.leave');
 });
 
+require __DIR__.'/auth.php'; 
 
-
-Route::get('/projects/{project}', [ProjectController::class, 'show'])
-    ->name('projects.show');
+Route::get('/projects/{project:id}', [ProjectController::class, 'show'])->name('projects.show');
 
 Route::get('/{username}', [ProfileController::class, 'show'])
     ->where('username', '[a-zA-Z0-9_-]+')
     ->name('profile.show');
 
-require __DIR__.'/auth.php'; 
+

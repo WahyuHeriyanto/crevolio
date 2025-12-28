@@ -35,6 +35,11 @@ class ProjectDetail extends Model
         return $this->belongsTo(ProjectStatus::class, 'project_status_id');
     }
 
+    public function progress()
+    {
+        return $this->belongsTo(ProgressStatus::class, 'progress_status_id');
+    }
+
     public function collaborators()
     {
         return $this->hasMany(ProjectAccess::class, 'project_detail_id');
