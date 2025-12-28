@@ -22,7 +22,6 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->timestamps();
-            $table->softDeletes();
 
             $table->unique(['user_id', 'project_id']);
         });

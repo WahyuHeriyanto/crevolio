@@ -56,4 +56,47 @@ class FollowController extends Controller
             ->delete();
         return back();
     }
+
+    public function toggleFollow(User $user)
+    {
+        $auth = auth()->user();
+        $targetProfile = $user->profile;
+
+        // 1. Cek Relasi Follow (Followed)
+        $relation = \App\Models\FollowRelation::where('user_id', $auth->id)
+                    ->where('follow_user_id', $user->id)->first();
+
+        if ($relation) {
+            // UNFOLLOW ACTION
+            \DB::transaction(function () use ($relation, $targetProfile, $auth) {
+                $relation->delete();
+                $targetProfile->decrement('followers');
+                $auth->profile->decrement('following');
+            });
+            return response()->json(['status' => 'none', 'followers' => $targetProfile->followers]);
+        }
+
+        // 2. Cek Request (Requested)
+        $request = \App\Models\FollowRequest::where('user_id', $user->id)
+                    ->where('requester_id', $auth->id)->first();
+
+        if ($request) {
+            // CANCEL REQUEST ACTION
+            $request->delete();
+            return response()->json(['status' => 'none', 'followers' => $targetProfile->followers]);
+        }
+
+        // 3. FOLLOW ACTION
+        if ($targetProfile->status === 'public') {
+            \DB::transaction(function () use ($auth, $user, $targetProfile) {
+                \App\Models\FollowRelation::create(['user_id' => $auth->id, 'follow_user_id' => $user->id]);
+                $targetProfile->increment('followers');
+                $auth->profile->increment('following');
+            });
+            return response()->json(['status' => 'followed', 'followers' => $targetProfile->followers]);
+        } else {
+            \App\Models\FollowRequest::create(['user_id' => $user->id, 'requester_id' => $auth->id]);
+            return response()->json(['status' => 'requested', 'followers' => $targetProfile->followers]);
+        }
+    }
 }

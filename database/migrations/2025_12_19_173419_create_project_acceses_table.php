@@ -23,7 +23,6 @@ return new class extends Migration
             $table->foreignId('project_detail_id')->constrained('project_details')->cascadeOnDelete();
 
             $table->timestamps();
-            $table->softDeletes();
 
             $table->unique(['access_user_id', 'project_detail_id']);
         });

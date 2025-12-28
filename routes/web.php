@@ -63,6 +63,8 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
         ->name('unfollow');
     Route::post('/cancel-request/{user}', [FollowController::class, 'cancelRequest'])
         ->name('follow.cancel');
+    Route::post('/follow/{user}/toggle', [FollowController::class, 'toggleFollow'])
+        ->name('follow.toggle');
 });
 
 require __DIR__.'/auth.php'; 

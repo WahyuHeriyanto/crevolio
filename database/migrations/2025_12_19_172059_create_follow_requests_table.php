@@ -19,7 +19,6 @@ return new class extends Migration
             $table->enum('status', ['pending', 'accepted', 'declined'])->default('pending');
 
             $table->timestamps();
-            $table->softDeletes();
 
             $table->unique(['user_id', 'requester_id']);
         });

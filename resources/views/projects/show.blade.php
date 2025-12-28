@@ -195,17 +195,30 @@
                                 <p class="text-lg font-black text-gray-900" x-text="activeProfile.following"></p>
                             </div>
                         </div>
-
                         @auth
+                            {{-- TOMBOL FOLLOW DINAMIS --}}
                             <button 
                                 x-show="activeProfile.id !== {{ auth()->id() }}" 
-                                class="w-full py-4 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-200"
+                                @click="handleFollow()"
+                                :disabled="isProcessing"
+                                class="w-full py-4 rounded-2xl font-bold transition flex items-center justify-center gap-2 shadow-lg"
+                                :class="{
+                                    'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200': activeProfile.followStatus === 'none',
+                                    'bg-gray-200 text-gray-400 cursor-default': activeProfile.followStatus === 'requested',
+                                    'bg-gray-200 text-gray-600 hover:bg-gray-300': activeProfile.followStatus === 'followed'
+                                }"
                             >
-                                <i class="fa-solid fa-user-plus text-sm"></i>
-                                Follow
+                                <template x-if="activeProfile.followStatus === 'none'">
+                                    <span><i class="fa-solid fa-user-plus text-sm mr-1"></i> Follow</span>
+                                </template>
+                                <template x-if="activeProfile.followStatus === 'requested'">
+                                    <span>Requested</span>
+                                </template>
+                                <template x-if="activeProfile.followStatus === 'followed'">
+                                    <span>Followed</span>
+                                </template>
                             </button>
                         @endauth
-
                         <div class="mt-10 text-left">
                             <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Other Collaborators</p>
                             <div class="flex -space-x-3 overflow-hidden">
@@ -218,6 +231,9 @@
                                             'photo' => asset('storage/' . ($access->user->profile->photo_profile ?? 'default.jpg')),
                                             'followers' => $access->user->profile->followers ?? 0,
                                             'following' => $access->user->profile->following ?? 0,
+                                            'followStatus' => \App\Models\FollowRelation::where('user_id', auth()->id())->where('follow_user_id', $access->user->id)->exists() 
+                                                ? 'followed' 
+                                                : (\App\Models\FollowRequest::where('user_id', $access->user->id)->where('requester_id', auth()->id())->exists() ? 'requested' : 'none')
                                         ]) }})"
                                         src="{{ asset('storage/' . ($access->user->profile->photo_profile ?? 'default.jpg')) }}" 
                                         class="inline-block h-10 w-10 rounded-full ring-2 ring-white cursor-pointer hover:scale-110 hover:z-10 transition object-cover"
@@ -278,6 +294,7 @@ function projectDetail() {
         fullsrc: '',
         showShareModal: false,
         copyText: 'Copy Link',
+        isProcessing: false,
 
         // Data Interaksi
         isLiked: {{ $project->likes()->where('user_id', auth()->id())->exists() ? 'true' : 'false' }},
@@ -290,7 +307,8 @@ function projectDetail() {
             email: '{{ $project->owner->email }}',
             photo: '{{ asset('storage/' . ($project->owner->profile->photo_profile ?? 'default.jpg')) }}',
             followers: {{ $project->owner->profile->followers ?? 0 }},
-            following: {{ $project->owner->profile->following ?? 0 }}
+            following: {{ $project->owner->profile->following ?? 0 }},
+            followStatus: '{{ \App\Models\FollowRelation::where('user_id', auth()->id())->where('follow_user_id', $project->owner->id)->exists() ? 'followed' : (\App\Models\FollowRequest::where('user_id', $project->owner->id)->where('requester_id', auth()->id())->exists() ? 'requested' : 'none') }}'
         },
 
         toggleLike() {
@@ -339,6 +357,33 @@ function projectDetail() {
         
         prevImage() {
             this.activeImage = (this.activeImage - 1 + this.totalImages) % this.totalImages;
+        },
+
+        async handleFollow() {
+            if(this.isProcessing) return;
+            this.isProcessing = true;
+
+            try {
+                // Gunakan URL dinamis berdasarkan activeProfile.id
+                const response = await fetch(`/follow/${this.activeProfile.id}/toggle`, {
+                    method: 'POST',
+                    headers: { 
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                // Update state Alpine
+                this.activeProfile.followStatus = data.status;
+                this.activeProfile.followers = data.followers;
+
+            } catch (error) {
+                console.error("Follow error:", error);
+            } finally {
+                this.isProcessing = false;
+            }
         },
 
         switchProfile(data) {
