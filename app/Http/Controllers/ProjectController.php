@@ -12,6 +12,8 @@ use App\Models\{
     ProjectStatus,
     ProgressStatus,
     ProjectAccess,
+    ProjectLike,
+    ProjectSaved,
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -185,6 +187,56 @@ class ProjectController extends Controller
         }
 
         return redirect()->route('projects.show', $project)->with('success', 'Project updated successfully!');
+    }
+
+    public function destroy(Project $project)
+    {
+        if (auth()->id() !== $project->owner_id) abort(403);
+        
+        $project->delete();
+        return redirect()->route('dashboard')->with('success', 'Project deleted successfully');
+    }
+
+    public function toggleLike(Project $project)
+    {
+        $user = auth()->user();
+        $like = ProjectLike::where('user_id', $user->id)->where('project_id', $project->id)->first();
+
+        if ($like) {
+            $like->delete();
+            $project->detail->decrement('like_count');
+            $status = false;
+        } else {
+            ProjectLike::create(['user_id' => $user->id, 'project_id' => $project->id]);
+            $project->detail->increment('like_count');
+            $status = true;
+        }
+
+        return response()->json([
+            'status' => $status,
+            'like_count' => $project->detail->like_count
+        ]);
+    }
+
+    public function toggleSave(Project $project)
+    {
+        $user = auth()->user();
+        $save = ProjectSaved::where('user_id', $user->id)->where('project_id', $project->id)->first();
+
+        if ($save) {
+            $save->delete();
+            $status = false;
+        } else {
+            ProjectSaved::create(['user_id' => $user->id, 'project_id' => $project->id]);
+            $status = true;
+        }
+
+        return response()->json(['status' => $status]);
+    }
+
+    public function export(Project $project)
+    {
+        return view('projects.export', compact('project'));
     }
 
 }

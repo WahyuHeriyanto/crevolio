@@ -38,4 +38,14 @@ class Project extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
+
+    public function likes() 
+    { 
+        return $this->hasMany(ProjectLike::class); 
+    }
+
+    public function saveds() 
+    { 
+        return $this->hasMany(ProjectSaved::class); 
+    }
 }

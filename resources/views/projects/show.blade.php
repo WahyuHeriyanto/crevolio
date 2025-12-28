@@ -2,39 +2,38 @@
 
 @section('content')
 <div x-data="projectDetail()" class="min-h-screen bg-[#F8F9FB] pb-20">
-    
+    {{-- TOOLBAR --}}
     <div class="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-4 bg-[#1A1A1A] w-20 py-8 items-center rounded-[40px] shadow-2xl border border-white/10">
         @auth
-            <button class="relative group flex flex-col items-center gap-1 transition text-white" title="Like">
+            <button @click="toggleLike()" class="relative group flex flex-col items-center gap-1 transition" :class="isLiked ? 'text-blue-400' : 'text-white'">
                 <div class="p-3 group-hover:bg-white/10 rounded-2xl transition">
-                    <i class="fa-solid fa-thumbs-up text-2xl group-hover:text-blue-400"></i>
+                    <i class="fa-solid fa-thumbs-up text-2xl"></i>
                 </div>
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{{ $project->detail->like_count ?? 0 }}</span>
-                <span class="absolute left-full ml-4 px-3 py-1 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Like Project</span>
+                <span class="text-[10px] font-bold uppercase tracking-tighter" x-text="likeCount"></span>
             </button>
         @endauth
         
-        <button class="relative group p-4 hover:bg-white/10 rounded-2xl transition text-white" title="Share">
+        <button @click="showShareModal = true" class="relative group p-4 hover:bg-white/10 rounded-2xl transition text-white">
             <i class="fa-solid fa-share text-2xl group-hover:text-emerald-400"></i>
-            <span class="absolute left-full ml-4 px-3 py-1 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Share</span>
         </button>
 
         @auth
-            <button class="relative group p-4 hover:bg-white/10 rounded-2xl transition text-white" title="Save Bookmark">
-                <i class="fa-solid fa-bookmark text-2xl group-hover:text-yellow-400"></i>
-                <span class="absolute left-full ml-4 px-3 py-1 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Save</span>
+            <button @click="toggleSave()" class="relative group p-4 hover:bg-white/10 rounded-2xl transition" :class="isSaved ? 'text-yellow-400' : 'text-white'">
+                <i class="fa-solid fa-bookmark text-2xl"></i>
             </button>
 
             @if($isOwner)
                 <div class="h-[1px] w-8 bg-white/10 my-2"></div>
-                <a href="{{ route('projects.edit', $project) }}" class="relative group p-4 hover:bg-white/10 rounded-2xl transition text-white" title="Edit Project">
+                <a href="{{ route('projects.edit', $project) }}" class="p-4 hover:bg-white/10 rounded-2xl transition text-white">
                     <i class="fa-solid fa-pen text-2xl group-hover:text-indigo-400"></i>
-                    <span class="absolute left-full ml-4 px-3 py-1 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Edit</span>
                 </a>
-                <button @click="confirmDelete()" class="relative group p-4 hover:bg-white/10 rounded-2xl transition text-white" title="Delete Project">
+                <button @click="confirmDelete()" class="p-4 hover:bg-white/10 rounded-2xl transition text-white">
                     <i class="fa-solid fa-trash-can text-2xl group-hover:text-red-500"></i>
-                    <span class="absolute left-full ml-4 px-3 py-1 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Delete</span>
                 </button>
+                {{-- Form Hidden untuk Delete --}}
+                <form id="delete-project-form" action="{{ route('projects.destroy', $project) }}" method="POST" class="hidden">
+                    @csrf @method('DELETE')
+                </form>
             @endif
         @endauth
     </div>
@@ -232,6 +231,35 @@
         </div>
     </div>
 
+    <div x-show="showShareModal" x-cloak class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+        <div @click="showShareModal = false" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-[32px] w-full max-w-md p-8 shadow-2xl" x-transition>
+            <h3 class="text-2xl font-bold mb-6">Share Project</h3>
+            
+            <div class="space-y-4">
+                <div class="p-4 bg-gray-50 rounded-2xl border flex items-center justify-between">
+                    <span class="text-sm text-gray-500 truncate mr-4">{{ url()->current() }}</span>
+                    <button @click="copyLink()" class="px-4 py-2 bg-black text-white text-xs font-bold rounded-xl hover:bg-gray-800 transition">
+                        <span x-text="copyText">Copy Link</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-8">
+                    <a href="{{ route('projects.export', $project) }}" target="_blank" class="flex flex-col items-center gap-3 p-6 rounded-[24px] border border-gray-100 hover:border-black hover:bg-gray-50 transition">
+                        <i class="fa-solid fa-file-pdf text-3xl text-red-500"></i>
+                        <span class="text-sm font-bold">Print PDF / PNG</span>
+                    </a>
+                    <button @click="shareWhatsApp()" class="flex flex-col items-center gap-3 p-6 rounded-[24px] border border-gray-100 hover:border-emerald-500 hover:bg-emerald-50 transition">
+                        <i class="fa-brands fa-whatsapp text-3xl text-emerald-500"></i>
+                        <span class="text-sm font-bold">WhatsApp</span>
+                    </button>
+                </div>
+            </div>
+            
+            <button @click="showShareModal = false" class="mt-8 w-full py-4 text-gray-400 font-bold hover:text-black transition">Close</button>
+        </div>
+    </div>
+
     <template x-if="fullscreen">
         <div class="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 md:p-10" @keydown.escape.window="fullscreen = false">
             <button @click="fullscreen = false" class="absolute top-10 right-10 text-white text-4xl hover:rotate-90 transition-transform duration-300">×</button>
@@ -248,6 +276,14 @@ function projectDetail() {
         totalImages: {{ $project->medias->count() }},
         fullscreen: false,
         fullsrc: '',
+        showShareModal: false,
+        copyText: 'Copy Link',
+
+        // Data Interaksi
+        isLiked: {{ $project->likes()->where('user_id', auth()->id())->exists() ? 'true' : 'false' }},
+        isSaved: {{ $project->saveds()->where('user_id', auth()->id())->exists() ? 'true' : 'false' }},
+        likeCount: {{ $project->detail->like_count ?? 0 }},
+
         activeProfile: {
             id: {{ $project->owner->id }},
             name: '{{ $project->owner->name }}',
@@ -255,6 +291,46 @@ function projectDetail() {
             photo: '{{ asset('storage/' . ($project->owner->profile->photo_profile ?? 'default.jpg')) }}',
             followers: {{ $project->owner->profile->followers ?? 0 }},
             following: {{ $project->owner->profile->following ?? 0 }}
+        },
+
+        toggleLike() {
+            fetch("{{ route('projects.like', $project) }}", {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.isLiked = data.status;
+                this.likeCount = data.like_count;
+            });
+        },
+
+        toggleSave() {
+            fetch("{{ route('projects.save', $project) }}", {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.isSaved = data.status;
+                if(this.isSaved) alert('Project saved to bookmarks');
+            });
+        },
+
+        copyLink() {
+            navigator.clipboard.writeText(window.location.href);
+            this.copyText = 'Copied!';
+            setTimeout(() => this.copyText = 'Copy Link', 2000);
+        },
+
+        confirmDelete() {
+            if(confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+                document.getElementById('delete-project-form').submit();
+            }
+        },
+
+        shareWhatsApp() {
+            window.open(`https://wa.me/?text=Check out this awesome project: ${window.location.href}`, '_blank');
         },
         
         nextImage() {
@@ -277,7 +353,7 @@ function projectDetail() {
         },
 
         alertVectra() {
-            alert('Launching Crevolio Vectra 1.0 (Beta)...');
+            alert('Crevolio Vectra 1.0 (Beta) will be available in February 2026');
         }
     }
 }
