@@ -30,8 +30,11 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
     Route::post('/projects', [ProjectController::class, 'store'])
         ->name('projects.store');
 
-        Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])
+    Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])
         ->name('projects.edit');
+    
+    Route::put('/projects/{project}', [ProjectController::class, 'update'])
+        ->name('projects.update');
 
     Route::put('/projects/{project}', [ProjectController::class, 'update'])
         ->name('projects.update');

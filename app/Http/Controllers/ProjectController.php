@@ -128,4 +128,63 @@ class ProjectController extends Controller
     return view('projects.show', compact('project', 'isOwner', 'isCollaborator'));
     }
 
+    public function edit(Project $project)
+    {
+        if (auth()->id() !== $project->owner_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $fields = ProjectField::all();
+        $statuses = ProjectStatus::all();
+        $tools = Tool::all();
+
+        return view('projects.edit', compact('project', 'fields', 'statuses', 'tools'));
+    }
+
+    public function update(Request $request, Project $project)
+    {
+        if (auth()->id() !== $project->owner_id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:2000',
+            'project_field_id' => 'required|exists:project_fields,id',
+            'project_status_id' => 'required|exists:project_statuses,id',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'tools' => 'nullable|array',
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $project->update([
+            'name' => $request->name,
+        ]);
+
+        $project->detail->update([
+            'description' => $request->description,
+            'project_field_id' => $request->project_field_id,
+            'project_status_id' => $request->project_status_id,
+            'start_date' => $request->start_date,
+            'end_date' => $request->has('ongoing') ? null : $request->end_date,
+        ]);
+
+        $project->detail->tools()->delete();
+        if ($request->has('tools')) {
+            foreach ($request->tools as $toolId) {
+                $project->detail->tools()->create(['tool_id' => $toolId]);
+            }
+        }
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $file->store('projects', 'public');
+                $project->medias()->create(['url' => $path]);
+            }
+        }
+
+        return redirect()->route('projects.show', $project)->with('success', 'Project updated successfully!');
+    }
+
 }

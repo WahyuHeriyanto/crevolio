@@ -3,36 +3,43 @@
 @section('content')
 <div x-data="projectDetail()" class="min-h-screen bg-[#F8F9FB] pb-20">
     
-    <div class="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-4 bg-[#1A1A1A] p-3 rounded-2xl shadow-2xl border border-white/10">
+    <div class="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-4 bg-[#1A1A1A] w-20 py-8 items-center rounded-[40px] shadow-2xl border border-white/10">
         @auth
-            <button class="p-3 hover:bg-white/10 rounded-xl transition text-white group" title="Like">
-                <i class="fa-regular fa-heart text-xl group-hover:text-pink-500"></i>
-                <span class="block text-[10px] text-center mt-1 text-gray-400">{{ $project->detail->like_count ?? 0 }}</span>
+            <button class="relative group flex flex-col items-center gap-1 transition text-white" title="Like">
+                <div class="p-3 group-hover:bg-white/10 rounded-2xl transition">
+                    <i class="fa-solid fa-thumbs-up text-2xl group-hover:text-blue-400"></i>
+                </div>
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{{ $project->detail->like_count ?? 0 }}</span>
+                <span class="absolute left-full ml-4 px-3 py-1 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Like Project</span>
             </button>
         @endauth
         
-        <button class="p-3 hover:bg-white/10 rounded-xl transition text-white group" title="Share">
-            <i class="fa-solid fa-share-nodes text-xl group-hover:text-blue-400"></i>
+        <button class="relative group p-4 hover:bg-white/10 rounded-2xl transition text-white" title="Share">
+            <i class="fa-solid fa-share text-2xl group-hover:text-emerald-400"></i>
+            <span class="absolute left-full ml-4 px-3 py-1 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Share</span>
         </button>
 
         @auth
-            <button class="p-3 hover:bg-white/10 rounded-xl transition text-white group" title="Save Bookmark">
-                <i class="fa-regular fa-bookmark text-xl group-hover:text-yellow-400"></i>
+            <button class="relative group p-4 hover:bg-white/10 rounded-2xl transition text-white" title="Save Bookmark">
+                <i class="fa-solid fa-bookmark text-2xl group-hover:text-yellow-400"></i>
+                <span class="absolute left-full ml-4 px-3 py-1 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Save</span>
             </button>
 
             @if($isOwner)
-                <div class="h-[1px] bg-white/10 mx-2 my-1"></div>
-                <a href="{{ route('projects.edit', $project) }}" class="p-3 hover:bg-white/10 rounded-xl transition text-white group" title="Edit Project">
-                    <i class="fa-regular fa-pen-to-square text-xl group-hover:text-green-400"></i>
+                <div class="h-[1px] w-8 bg-white/10 my-2"></div>
+                <a href="{{ route('projects.edit', $project) }}" class="relative group p-4 hover:bg-white/10 rounded-2xl transition text-white" title="Edit Project">
+                    <i class="fa-solid fa-pen text-2xl group-hover:text-indigo-400"></i>
+                    <span class="absolute left-full ml-4 px-3 py-1 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Edit</span>
                 </a>
-                <button @click="confirmDelete()" class="p-3 hover:bg-white/10 rounded-xl transition text-white group" title="Delete Project">
-                    <i class="fa-regular fa-trash-can text-xl group-hover:text-red-500"></i>
+                <button @click="confirmDelete()" class="relative group p-4 hover:bg-white/10 rounded-2xl transition text-white" title="Delete Project">
+                    <i class="fa-solid fa-trash-can text-2xl group-hover:text-red-500"></i>
+                    <span class="absolute left-full ml-4 px-3 py-1 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Delete</span>
                 </button>
             @endif
         @endauth
     </div>
 
-    <div class="max-w-7xl mx-auto px-6 pt-10">
+    <div class="max-w-7xl mx-auto px-6 pt-10 lg:pl-32">
         
         <div class="mb-8 text-center">
             <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">{{ $project->name }}</h1>
@@ -43,10 +50,6 @@
                 <span class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-600 border border-emerald-200">
                     {{ $project->detail->status->name }}
                 </span>
-                <div class="flex items-center gap-1 text-gray-500 ml-4">
-                    <i class="fa-solid fa-calendar-day"></i>
-                    <span class="text-sm">{{ \Carbon\Carbon::parse($project->detail->start_date)->format('M Y') }} - {{ $project->detail->end_date ? \Carbon\Carbon::parse($project->detail->end_date)->format('M Y') : 'Present' }}</span>
-                </div>
             </div>
         </div>
 
@@ -68,11 +71,11 @@
                             >
                         @endforeach
 
-                        <button @click="prevImage()" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition items-center justify-center hidden md:flex">
-                            <i class="fa-solid fa-chevron-left"></i>
+                        <button @click="prevImage()" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur rounded-full shadow-lg opacity-60 group-hover:opacity-100 transition flex items-center justify-center text-black hover:bg-white z-10">
+                            <i class="fa-solid fa-chevron-left text-xl"></i>
                         </button>
-                        <button @click="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition items-center justify-center hidden md:flex">
-                            <i class="fa-solid fa-chevron-right"></i>
+                        <button @click="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur rounded-full shadow-lg opacity-60 group-hover:opacity-100 transition flex items-center justify-center text-black hover:bg-white z-10">
+                            <i class="fa-solid fa-chevron-right text-xl"></i>
                         </button>
                     </div>
 
@@ -88,49 +91,58 @@
                 </div>
 
                 <div class="bg-white rounded-[32px] p-8 md:p-12 shadow-sm border">
-                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
-                        <span class="w-1.5 h-6 bg-black rounded-full"></span>
-                        Project Overview
-                    </h3>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                        <h3 class="text-xl font-bold flex items-center gap-2">
+                            <span class="w-1.5 h-6 bg-black rounded-full"></span>
+                            Project Overview
+                        </h3>
+                        
+                        <div class="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-2xl border border-gray-100">
+                            <i class="fa-solid fa-calendar-day text-indigo-500"></i>
+                            <span class="text-sm font-semibold text-gray-600">
+                                {{ \Carbon\Carbon::parse($project->detail->start_date)->format('d M Y') }} 
+                                - 
+                                {{ $project->detail->end_date ? \Carbon\Carbon::parse($project->detail->end_date)->format('d M Y') : 'Present' }}
+                            </span>
+                        </div>
+                    </div>
+
                     <div class="prose prose-lg max-w-none text-gray-600 text-justify leading-relaxed">
                         {!! nl2br(e($project->detail->description)) !!}
                     </div>
 
-                    <div class="mt-12">
-                        <p class="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">Status Progress</p>
-                        <div class="flex flex-wrap gap-2">
-                                <span class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm font-medium hover:border-black transition cursor-default">
-                                    {{ $project->detail->progress->name }}
-                                </span>
+                    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Status Progress</p>
+                            <span class="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl text-sm font-bold uppercase tracking-tight">
+                                {{ $project->detail->progress->name ?? 'N/A' }}
+                            </span>
                         </div>
-                    </div>
-                    <div class="mt-6">
-                        <p class="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">Tech Stack & Tools</p>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach($project->detail->tools as $projectTool)
-                                <span class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm font-medium hover:border-black transition cursor-default">
-                                    {{ $projectTool->tool->name }}
-                                </span>
-                            @endforeach
+                        <div>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Tech Stack & Tools</p>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach($project->detail->tools as $projectTool)
+                                    <span class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm font-medium hover:border-black transition cursor-default">
+                                        {{ $projectTool->tool->name }}
+                                    </span>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-[32px] p-8 shadow-sm border">
                     <h3 class="text-xl font-bold mb-6">Collaborators ({{ $project->detail->collaborators->count() }})</h3>
-                    <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         @foreach($project->detail->collaborators as $access)
-                        <div class="flex items-center justify-between p-4 rounded-2xl border border-transparent hover:border-gray-100 hover:bg-gray-50 transition">
+                        <div class="flex items-center justify-between p-4 rounded-2xl border border-transparent hover:border-gray-100 hover:bg-gray-50 transition group">
                             <div class="flex items-center gap-4">
-                                <img src="{{ asset('storage/' . ($access->user->profile->photo_profile ?? 'default.jpg')) }}" class="w-12 h-12 rounded-full object-cover">
+                                <img src="{{ asset('storage/' . ($access->user->profile->photo_profile ?? 'default.jpg')) }}" class="w-12 h-12 rounded-full object-cover shadow-sm group-hover:scale-105 transition">
                                 <div>
-                                    <h4 class="font-bold text-gray-900">{{ $access->user->name }}</h4>
-                                    <p class="text-sm text-gray-500">{{ $access->user->username }}</p>
+                                    <h4 class="font-bold text-gray-900 text-sm">{{ $access->user->name }}</h4>
+                                    <p class="text-xs text-gray-500">{{ $access->project_role }}</p>
                                 </div>
                             </div>
-                            <span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg uppercase tracking-tight">
-                                {{ $access->project_role }}
-                            </span>
                         </div>
                         @endforeach
                     </div>
@@ -165,7 +177,6 @@
             </div>
 
             <div class="col-span-12 lg:col-span-4 space-y-6">
-                
                 <div class="bg-white rounded-[32px] p-8 shadow-sm border sticky top-10">
                     <div class="text-center" x-ref="profileCard">
                         <div class="relative inline-block mb-4">
@@ -187,7 +198,10 @@
                         </div>
 
                         @auth
-                            <button class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+                            <button 
+                                x-show="activeProfile.id !== {{ auth()->id() }}" 
+                                class="w-full py-4 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-200"
+                            >
                                 <i class="fa-solid fa-user-plus text-sm"></i>
                                 Follow
                             </button>
@@ -199,6 +213,7 @@
                                 @foreach($project->detail->collaborators as $access)
                                     <img 
                                         @click="switchProfile({{ json_encode([
+                                            'id' => $access->user->id,
                                             'name' => $access->user->name,
                                             'email' => $access->user->email,
                                             'photo' => asset('storage/' . ($access->user->profile->photo_profile ?? 'default.jpg')),
@@ -234,6 +249,7 @@ function projectDetail() {
         fullscreen: false,
         fullsrc: '',
         activeProfile: {
+            id: {{ $project->owner->id }},
             name: '{{ $project->owner->name }}',
             email: '{{ $project->owner->email }}',
             photo: '{{ asset('storage/' . ($project->owner->profile->photo_profile ?? 'default.jpg')) }}',
@@ -253,24 +269,17 @@ function projectDetail() {
             this.activeProfile = data;
         },
 
-        alertVectra() {
-            alert('Currently this feature is not available.');
-        },
-
         confirmDelete() {
             if(confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-                // Submit delete form
+                // Submit delete logic here
+                console.log('Project deleted');
             }
+        },
+
+        alertVectra() {
+            alert('Launching Crevolio Vectra 1.0 (Beta)...');
         }
     }
 }
 </script>
-
-<style>
-    /* Custom Scrollbar for better UI */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #f1f1f1; }
-    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #999; }
-</style>
 @endsection

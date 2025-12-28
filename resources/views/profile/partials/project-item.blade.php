@@ -18,7 +18,7 @@
                 <a href="{{ route('projects.edit', $project->id) }}"
                 class="bg-white p-2 rounded-full shadow hover:bg-gray-100"
                 onclick="event.stopPropagation()">
-                    ✏️
+                    <i class="fa-solid fa-pen text-xl group-hover:text-indigo-400"></i>
                 </a>
             </div>
         @endif
