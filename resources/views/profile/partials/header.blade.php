@@ -121,9 +121,41 @@
 
                 @auth
                     @if(auth()->id() !== $user->id)
-                        <button class="px-4 py-2 text-sm rounded-full border hover:bg-gray-100 transition">
-                            Follow
-                        </button>
+                        @php
+                            $isFollowed = \App\Models\FollowRelation::where('user_id', auth()->id())
+                                            ->where('follow_user_id', $user->id)->exists();
+                            
+                            $isRequested = \App\Models\FollowRequest::where('user_id', $user->id)
+                                            ->where('requester_id', auth()->id())->exists();
+                        @endphp
+
+                        @if($isFollowed)
+                            {{-- KONDISI FOLLOWED --}}
+                            <form action="{{ route('unfollow', $user) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="px-5 py-2 text-sm rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition font-semibold">
+                                    Followed
+                                </button>
+                            </form>
+
+                        @elseif($isRequested)
+                            {{-- KONDISI REQUESTED --}}
+                            <form action="{{ route('follow.cancel', $user) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="px-5 py-2 text-sm rounded-full bg-gray-200 text-gray-400 cursor-pointer hover:bg-gray-300 transition font-semibold">
+                                    Requested
+                                </button>
+                            </form>
+
+                        @else
+                            {{-- KONDISI DEFAULT (FOLLOW) --}}
+                            <form action="{{ route('follow', $user) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="px-5 py-2 text-sm rounded-full bg-black text-white hover:bg-gray-800 transition font-semibold">
+                                    + Follow
+                                </button>
+                            </form>
+                        @endif
                     @endif
                 @endauth
 

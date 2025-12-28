@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\FollowController;
 use Illuminate\Support\Facades\Route;
 
 //Guest
@@ -55,6 +56,13 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
     
     Route::delete('/projects/{project}/leave', [ProjectController::class, 'leave'])
         ->name('projects.leave');
+    
+    Route::post('/follow/{user}', [FollowController::class, 'follow'])
+        ->name('follow');
+    Route::post('/unfollow/{user}', [FollowController::class, 'unfollow'])
+        ->name('unfollow');
+    Route::post('/cancel-request/{user}', [FollowController::class, 'cancelRequest'])
+        ->name('follow.cancel');
 });
 
 require __DIR__.'/auth.php'; 
