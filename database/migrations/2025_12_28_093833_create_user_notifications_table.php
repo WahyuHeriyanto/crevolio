@@ -23,7 +23,6 @@ return new class extends Migration
             $table->unsignedInteger('is_read')->nullable();
 
             $table->timestamps();
-            $table->softDeletes();
 
             $table->unique(['user_id']);
         });

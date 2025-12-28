@@ -24,6 +24,22 @@
 
             @if($isOwner)
                 <div class="h-[1px] w-8 bg-white/10 my-2"></div>
+                {{-- TOMBOL JOIN REQUESTS --}}
+                <a href="{{ route('projects.requests') }}" class="relative group p-4 hover:bg-white/10 rounded-2xl transition text-white">
+                    <i class="fa-solid fa-users-viewfinder text-2xl group-hover:text-amber-400"></i>
+                    
+                    {{-- Badge Indikator Request Pending --}}
+                    @if($pendingRequestsCount > 0)
+                        <span class="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-[#1A1A1A]">
+                            {{ $pendingRequestsCount }}
+                        </span>
+                    @endif
+
+                    {{-- Tooltip Simple --}}
+                    <span class="absolute left-full ml-4 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                        Join Requests
+                    </span>
+                </a>
                 <a href="{{ route('projects.edit', $project) }}" class="p-4 hover:bg-white/10 rounded-2xl transition text-white">
                     <i class="fa-solid fa-pen text-2xl group-hover:text-indigo-400"></i>
                 </a>
@@ -153,15 +169,24 @@
                         Run Crevolio Vectra 1.0
                     </button>
 
+                    @php
+                        $hasRequested = auth()->check() ? \App\Models\ProjectAccessRequest::where('project_id', $project->id)->where('requester_id', auth()->id())->first() : null;
+                    @endphp
                     @auth
                         @if(!$isOwner)
                             @if(!$isCollaborator)
-                                <form action="{{ route('projects.join', $project) }}" method="POST" class="flex-1">
-                                    @csrf
-                                    <button type="submit" class="w-full py-4 px-8 rounded-2xl bg-black text-white font-bold hover:bg-gray-800 transition-all shadow-lg hover:shadow-black/20">
-                                        Join Project
+                                @if(!$hasRequested)
+                                    <form action="{{ route('projects.join', $project) }}" method="POST" class="flex-1">
+                                        @csrf
+                                        <button type="submit" class="w-full py-4 px-8 rounded-2xl bg-black text-white font-bold hover:bg-gray-800 transition-all shadow-lg">
+                                            Join Project
+                                        </button>
+                                    </form>
+                                @elseif($hasRequested->status === 'pending')
+                                    <button disabled class="flex-1 py-4 px-8 rounded-2xl bg-gray-100 text-gray-400 font-bold cursor-not-allowed">
+                                        Requested
                                     </button>
-                                </form>
+                                @endif
                             @else
                                 <form action="{{ route('projects.leave', $project) }}" method="POST" class="flex-1">
                                     @csrf @method('DELETE')

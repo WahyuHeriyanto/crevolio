@@ -14,6 +14,8 @@ use App\Models\{
     ProjectAccess,
     ProjectLike,
     ProjectSaved,
+    ProjectAccessRequest,
+    UserNotification,
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -119,6 +121,13 @@ class ProjectController extends Controller
 
         $user = auth()->user();
     $isOwner = auth()->check() && $user->id === $project->owner_id;
+
+    $pendingRequestsCount = 0;
+    if ($isOwner) {
+        $pendingRequestsCount = ProjectAccessRequest::where('project_id', $project->id)
+            ->where('status', 'pending')
+            ->count();
+    }
     
     $isCollaborator = false;
     if (auth()->check()) {
@@ -127,7 +136,7 @@ class ProjectController extends Controller
             ->isNotEmpty();
     }
 
-    return view('projects.show', compact('project', 'isOwner', 'isCollaborator'));
+    return view('projects.show', compact('project', 'isOwner', 'isCollaborator', 'pendingRequestsCount'));
     }
 
     public function edit(Project $project)
@@ -237,6 +246,98 @@ class ProjectController extends Controller
     public function export(Project $project)
     {
         return view('projects.export', compact('project'));
+    }
+
+
+    public function join(Project $project)
+    {
+        $user = auth()->user();
+
+        // 1. Cek apakah sudah pernah request
+        $existingRequest = ProjectAccessRequest::where('project_id', $project->id)
+            ->where('requester_id', $user->id)
+            ->first();
+
+        if ($existingRequest) {
+            return back()->with('error', 'You have already sent a join request.');
+        }
+
+        // 2. Simpan Request
+        ProjectAccessRequest::create([
+            'project_id' => $project->id,
+            'user_id' => $project->owner_id,
+            'requester_id' => $user->id,
+            'status' => 'pending'
+        ]);
+
+        // 3. Simpan Notifikasi untuk Owner
+        UserNotification::create([
+            'user_id' => $project->owner_id,
+            'type' => 'project_join',
+            'title' => 'New Join Request from ' . $user->name,
+            'message' => "Wants to join your project: {$project->name}. Review the request to approve or reject.",
+            'target_url' => route('projects.requests'), // Halaman list request
+            'is_read' => 0
+        ]);
+
+        return back()->with('success', 'Join request sent successfully!');
+    }
+
+    // Menampilkan daftar request (untuk owner project)
+    public function requests()
+    {
+        $requests = ProjectAccessRequest::with(['requester', 'project'])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+            
+        return view('projects.requests', compact('requests'));
+    }
+
+    // Menampilkan daftar notifikasi
+    public function notifications()
+    {
+        $notifications = UserNotification::where('user_id', auth()->id())
+            ->latest()
+            ->get();
+        
+        // Mark as read saat dibuka
+        UserNotification::where('user_id', auth()->id())->update(['is_read' => true]);
+
+        return view('notifications.index', compact('notifications'));
+    }
+
+    // Action Approve/Reject
+    public function handleRequest(ProjectAccessRequest $request, $action)
+    {
+        if (auth()->id() !== $request->user_id) abort(403);
+
+        if ($action === 'approve') {
+            $request->update(['status' => 'approved']);
+            
+            // Tambahkan ke table project_access (collaborators)
+            \App\Models\ProjectAccess::create([
+                'access_user_id' => $request->requester_id,
+                'access_level' => 2, // Member
+                'project_role' => 'Contributor',
+                'project_detail_id' => $request->project->project_detail_id,
+            ]);
+
+            // Kirim notif balik ke requester
+            UserNotification::create([
+                'user_id' => $request->requester_id,
+                'type' => 'request_approved',
+                'title' => 'Join Request Approved!',
+                'message' => "Congratulations! You are now a contributor in {$request->project->name}.",
+                'target_url' => route('projects.show', $request->project->slug),
+                'is_read' => 0
+            ]);
+
+        } else {
+            $request->update(['status' => 'rejected']);
+        }
+
+        return back()->with('success', 'Request processed.');
     }
 
 }

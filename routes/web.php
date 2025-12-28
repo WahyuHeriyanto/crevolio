@@ -65,6 +65,15 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
         ->name('follow.cancel');
     Route::post('/follow/{user}/toggle', [FollowController::class, 'toggleFollow'])
         ->name('follow.toggle');
+
+    Route::post('/projects/{project}/join', [ProjectController::class, 'join'])
+        ->name('projects.join');
+    Route::get('/my-requests', [ProjectController::class, 'requests'])
+        ->name('projects.requests');
+    Route::post('/requests/{request}/{action}', [ProjectController::class, 'handleRequest'])
+        ->name('projects.handle-request');
+    Route::get('/notifications', [ProjectController::class, 'notifications'])
+        ->name('notifications.index');
 });
 
 require __DIR__.'/auth.php'; 
