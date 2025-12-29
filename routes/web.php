@@ -6,6 +6,7 @@ use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SavedProjectController;
 use Illuminate\Support\Facades\Route;
 
 //Guest
@@ -79,6 +80,8 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
         ->name('notifications.read');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])
         ->name('notifications.markAllRead');
+    Route::get('/projects/saved', [SavedProjectController::class, 'index'])
+        ->name('projects.saved');
 });
 
 require __DIR__.'/auth.php'; 

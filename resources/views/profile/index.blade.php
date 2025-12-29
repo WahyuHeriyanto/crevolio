@@ -16,11 +16,12 @@
             @forelse ($projects as $project)
                 @include('profile.partials.project-item', [
                     'project' => $project,
-                    'isOwner' => $isOwner,
+                    // Tombol edit hanya muncul jika yang login adalah owner project tersebut
+                    'isOwner' => auth()->check() && auth()->id() === $project->owner_id,
                 ])
             @empty
-                <div class="text-gray-500">
-                    No projects yet.
+                <div class="text-center py-10 bg-white rounded-3xl border-2 border-dashed border-gray-100">
+                    <p class="text-gray-400">No projects yet.</p>
                 </div>
             @endforelse
         </div>

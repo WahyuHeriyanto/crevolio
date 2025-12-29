@@ -32,7 +32,13 @@ class ProfileController extends Controller
         'detail.tools.tool',
         'detail.collaborators.user.profile',
     ])
-    ->where('owner_id', $user->id)
+    ->where(function($query) use ($user) {
+        $query->where('owner_id', $user->id) 
+              ->orWhereHas('detail.collaborators', function($q) use ($user) {
+                  $q->where('access_user_id', $user->id)
+                    ->where('access_level', 0);
+              });
+    })
     ->latest()
     ->get();
 

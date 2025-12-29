@@ -70,7 +70,7 @@ class ProjectController extends Controller
             $access = ProjectAccess::create([
                 'access_user_id' => auth()->id(),
                 'access_level' => 1,
-                'project_role' => 'Admin',
+                'project_role' => 'Owner',
                 'project_detail_id' => $detail->id,
             ]);
 
@@ -318,7 +318,7 @@ class ProjectController extends Controller
             // Tambahkan ke table project_access (collaborators)
             \App\Models\ProjectAccess::create([
                 'access_user_id' => $request->requester_id,
-                'access_level' => 2, // Member
+                'access_level' => 0, 
                 'project_role' => 'Contributor',
                 'project_detail_id' => $request->project->project_detail_id,
             ]);

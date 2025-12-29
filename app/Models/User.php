@@ -68,5 +68,10 @@ class User extends Authenticatable
     }
     public function followRequestsReceived() 
         { return $this->hasMany(FollowRequest::class, 'user_id'); 
+    }  
+
+    public function saveds()
+    {
+        return $this->hasMany(ProjectSaved::class, 'user_id');
     }
 }

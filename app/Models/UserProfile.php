@@ -36,4 +36,9 @@ class UserProfile extends Model
         return $this->hasMany(UserSocialMedia::class);
     }
 
+    public function careerPosition()
+    {
+        return $this->belongsTo(CareerPosition::class, 'career_position_id');
+    }
+
 }

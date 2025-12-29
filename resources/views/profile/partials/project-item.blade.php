@@ -5,6 +5,8 @@
     $tools   = $detail?->tools ?? collect();
     $collabs = $detail?->collaborators ?? collect();
     $cover   = $project->medias->first();
+    $displayUserId = $user->id ?? auth()->id();
+    $isProjectOwner = ($project->owner_id === $user->id);
 @endphp
 
 <div
@@ -35,7 +37,17 @@
             </div>
 
             {{-- TEXT CONTENT --}}
-            <div class="flex-1 space-y-3">
+            <div class="flex-1 space-y-3 pr-12">
+                {{-- LABEL OWNER / CONTRIBUTOR --}}
+                @if($isProjectOwner)
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase border border-indigo-100">
+                        <i class="fa-solid fa-crown text-[8px]"></i> Owner
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-bold uppercase border border-amber-100">
+                        <i class="fa-solid fa-user-group text-[8px]"></i> Contributor
+                    </span>
+                @endif
 
                 {{-- STATUS --}}
                 @if ($status)

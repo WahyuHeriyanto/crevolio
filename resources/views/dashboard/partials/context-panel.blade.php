@@ -14,24 +14,24 @@
                 {{ Auth::user()->name ?? 'Your Name' }}
             </div>
             <div class="text-sm text-gray-500">
-                Product Builder
+                {{Auth::user()->profile?->careerPosition?->name ?? ''}}
             </div>
         </div>
     </div>
 
-    <div class="text-sm text-gray-600 mb-4">
-        Building digital products & collaborating with passionate people.
+    <div class="text-sm text-gray-600 mb-4 line-clamp-3">
+        {{ Auth::user()->profile?->description ?? ''}}
     </div>
 
     <div class="space-y-2 text-sm">
-        <a href="#" class="block text-gray-700 hover:text-black">
+        <a href="{{ route('projects.saved') }}" class="block text-gray-700 hover:text-black">
             Saved Projects
         </a>
-        <a href="#" class="block text-gray-700 hover:text-black">
+        <!-- <a href="#" class="block text-gray-700 hover:text-black">
             My Collaborations
         </a>
         <a href="#" class="block text-gray-700 hover:text-black">
             Drafts
-        </a>
+        </a> -->
     </div>
 </div>

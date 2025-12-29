@@ -58,13 +58,15 @@
                 x-transition
                 class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
             >
-                @for ($i = 0; $i < 6; $i++)
-                    @include('dashboard.partials.collaborator-card')
-                @endfor
+                @forelse ($crevolians as $crevolian)
+                    @include('dashboard.partials.collaborator-card', ['user' => $crevolian])
+                @empty
+                    <div class="col-span-full text-center py-20 bg-white rounded-[40px] border-2 border-dashed border-gray-100">
+                        <p class="text-gray-400 font-medium">No other creators found.</p>
+                    </div>
+                @endforelse
             </div>
-
         </section>
-
     </div>
 </div>
 @endsection

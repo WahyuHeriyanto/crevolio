@@ -35,6 +35,13 @@ class DashboardController extends Controller
         ->orderBy('created_at', 'desc')
         ->paginate(10);
 
-        return view('dashboard.index', compact('projects'));
+        $crevolians = User::with(['profile.expertises.expertise',
+        'profile.careerPosition'])
+        ->where('id', '!=', $user->id)
+        ->latest()
+        ->take(12)
+        ->get();
+
+        return view('dashboard.index', compact('projects', 'crevolians'));
     }
 }
