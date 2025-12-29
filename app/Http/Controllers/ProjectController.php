@@ -329,7 +329,7 @@ class ProjectController extends Controller
                 'type' => 'request_approved',
                 'title' => 'Join Request Approved!',
                 'message' => "Congratulations! You are now a contributor in {$request->project->name}.",
-                'target_url' => route('projects.show', $request->project->slug),
+                'target_url' => route('projects.show', $request->project->id),
                 'is_read' => 0
             ]);
 

@@ -1,8 +1,12 @@
 <div class="bg-white rounded-2xl p-5 shadow-sm sticky top-24">
-
+    @php
+            $userPhoto = auth()->user()->profile->photo_profile 
+                        ? asset('storage/' . auth()->user()->profile->photo_profile) 
+                        : asset('images/default-avatar.png');
+    @endphp
     <div class="flex items-center gap-4 mb-4">
         <img
-            src="https://i.pravatar.cc/80"
+            src="{{ $userPhoto }}"
             class="w-14 h-14 rounded-full"
         />
         <div>

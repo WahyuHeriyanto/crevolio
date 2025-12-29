@@ -34,21 +34,24 @@
                         ? 'text-black border-b-2 border-black pb-3'
                         : 'text-gray-400 hover:text-black pb-3'"
                 >
-                    Collaborators
+                    Crevolians
                 </button>
             </div>
 
             {{-- PROJECTS FEED --}}
-            <div
-                x-show="tab === 'projects'"
-                x-transition
-                class="space-y-6"
-            >
-                @for ($i = 0; $i < 5; $i++)
-                    @include('dashboard.partials.project-card')
-                @endfor
-            </div>
+            <div x-show="tab === 'projects'" x-transition class="space-y-8">
+                @forelse ($projects as $project)
+                    @include('dashboard.partials.project-card', ['project' => $project])
+                @empty
+                    <div class="text-center py-20 bg-white rounded-[40px] border-2 border-dashed border-gray-100">
+                        <p class="text-gray-400 font-medium">No projects found in your feed.</p>
+                    </div>
+                @endforelse
 
+                <div class="mt-10">
+                    {{ $projects->links() }}
+                </div>
+            </div>
             {{-- COLLABORATORS FEED --}}
             <div
                 x-show="tab === 'collaborators'"
