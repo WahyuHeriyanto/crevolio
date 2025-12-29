@@ -41,8 +41,8 @@
                     <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
                         <i class="fa-solid fa-briefcase text-gray-200 text-3xl"></i>
                     </div>
-                    <h4 class="text-gray-900 font-bold">Belum ada portfolio</h4>
-                    <p class="text-gray-400 text-sm mt-1 max-w-xs">Pengalaman kerja atau proyek mandiri akan muncul di sini.</p>
+                    <h4 class="text-gray-900 font-bold">No portfolio yet</h4>
+                    <p class="text-gray-400 text-sm mt-1 max-w-xs">Add experience with projects and it will appear here.</p>
                 </div>
             @endforelse
         </div>
