@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\Project;
 use App\Models\ProjectDetail;
+use App\Models\Portfolio;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,10 +43,21 @@ class ProfileController extends Controller
     ->latest()
     ->get();
 
+    // AMBIL DATA PORTFOLIO
+    $portfolios = Portfolio::with([
+        'medias',
+        'tools.tool',
+        'progressStatus'
+    ])
+    ->where('user_id', $user->id)
+    ->orderBy('start_date', 'desc')
+    ->get();
+
     return view('profile.index', [
         'user' => $user,
         'profile' => $user->profile,
         'projects' => $projects,
+        'portfolios' => $portfolios,
         'isOwner' => auth()->check() && auth()->id() === $user->id,
     ]);
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SavedProjectController;
+use App\Http\Controllers\PortfolioController;
 use Illuminate\Support\Facades\Route;
 
 //Guest
@@ -82,6 +83,8 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
         ->name('notifications.markAllRead');
     Route::get('/projects/saved', [SavedProjectController::class, 'index'])
         ->name('projects.saved');
+
+    Route::resource('portfolios', PortfolioController::class)->except(['index', 'show']);
 });
 
 require __DIR__.'/auth.php'; 

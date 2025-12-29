@@ -171,7 +171,7 @@
                         </a>
                         <a
                             x-show="tab === 'portfolios'"
-                            href="#"
+                            href="{{ route('portfolios.create') }}"
                             class="px-5 py-2 text-sm rounded-full bg-black text-white hover:bg-gray-800 transition"
                         >
                             + Add Portfolio
