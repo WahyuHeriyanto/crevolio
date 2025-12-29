@@ -283,6 +283,28 @@ class ProjectController extends Controller
         return back()->with('success', 'Join request sent successfully!');
     }
 
+    public function leave(Project $project)
+    {
+        $user = auth()->user();
+        $project->detail->collaborators()
+        ->where('access_user_id', $user->id) 
+        ->delete();
+
+        ProjectAccessRequest::where('project_id', $project->id)
+            ->where('requester_id', $user->id)
+            ->delete();
+
+        UserNotification::create([
+            'user_id' => $project->owner_id,
+            'type' => 'project_leave',
+            'title' => 'Member Left',
+            'message' => "{$user->name} has left your project: {$project->name}.",
+            'is_read' => 0
+        ]);
+
+        return back()->with('success', 'You have left the project.');
+    }
+
     // Menampilkan daftar request (untuk owner project)
     public function requests()
     {
@@ -316,12 +338,26 @@ class ProjectController extends Controller
             $request->update(['status' => 'approved']);
             
             // Tambahkan ke table project_access (collaborators)
-            \App\Models\ProjectAccess::create([
-                'access_user_id' => $request->requester_id,
-                'access_level' => 0, 
-                'project_role' => 'Contributor',
-                'project_detail_id' => $request->project->project_detail_id,
-            ]);
+
+            $access = \App\Models\ProjectAccess::withTrashed()
+                ->where('access_user_id', $request->requester_id)
+                ->where('project_detail_id', $request->project->project_detail_id)
+                ->first();
+            
+            if ($access) {
+                $access->restore();
+                $access->update([
+                    'project_role' => 'Contributor',
+                    'access_level' => 0
+                ]);
+            } else {
+                \App\Models\ProjectAccess::create([
+                    'access_user_id' => $request->requester_id,
+                    'access_level' => 0, 
+                    'project_role' => 'Contributor',
+                    'project_detail_id' => $request->project->project_detail_id,
+                ]);
+            }
 
             // Kirim notif balik ke requester
             UserNotification::create([
