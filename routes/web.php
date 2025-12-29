@@ -85,6 +85,9 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
         ->name('projects.saved');
 
     Route::resource('portfolios', PortfolioController::class)->except(['index', 'show']);
+
+    Route::get('/profile/{username}/export', [ProfileController::class, 'export'])
+    ->name('profile.export');
 });
 
 require __DIR__.'/auth.php'; 
