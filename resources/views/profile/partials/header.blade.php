@@ -104,7 +104,7 @@
                                 class="hover:opacity-80 transition"
                             >
                                 <img
-                                    src="{{ asset('storage/' . $social->category->icon) }}"
+                                    src="{{ asset('assets/' . $social->category->icon) }}"
                                     alt="{{ $social->category->name }}"
                                     class="w-8 h-8"
                                 />

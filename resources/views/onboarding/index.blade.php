@@ -72,7 +72,7 @@
 
         <div class="mt-8 flex justify-between">
             <button type="button" @click="back()">Back</button>
-            <button type="button" @click="next()">Next</button>
+            <button type="button" @click="next()" class="px-8 py-3 bg-white text-black font-bold rounded-xl hover:bg-amber-500 hover:text-white transition">Next</button>
         </div>
     </div>
 
@@ -131,90 +131,110 @@
 
             <div class="mt-8 flex justify-between">
                 <button type="button" @click="back()">Back</button>
-                <button type="button" @click="next()">Next</button>
+                <button type="button" @click="next()" class="px-8 py-3 bg-white text-black font-bold rounded-xl hover:bg-amber-500 hover:text-white transition">Next</button>
             </div>
         </div>
     </div>
 
     <!-- STEP 4 : EXPERTISE -->
-    <div x-show="step === 4"
-         x-transition:enter="transition ease-out duration-500"
-         x-transition:enter-start="opacity-0 translate-y-6"
-         x-transition:enter-end="opacity-100 translate-y-0">
+    <div x-show="step === 4" class="space-y-6"
+        x-transition:enter="transition ease-out duration-500"
+        x-transition:enter-start="opacity-0 translate-y-6"
+        x-transition:enter-end="opacity-100 translate-y-0">
 
-        <h2 class="text-3xl font-bold mb-6 text-center">Your expertise</h2>
+        <h2 class="text-3xl font-bold text-center">Your expertise</h2>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            @foreach($expertises as $exp)
-                <div
-                    @click="
-                        form.expertises.includes({{ $exp->id }})
-                        ? form.expertises.splice(form.expertises.indexOf({{ $exp->id }}),1)
-                        : form.expertises.push({{ $exp->id }})
-                    "
-                    class="cursor-pointer p-4 rounded-xl border border-white/20 text-center
-                           transition-all duration-300 ease-out
-                           hover:scale-110 hover:shadow-xl"
-                    :class="form.expertises.includes({{ $exp->id }})
-                        ? 'bg-indigo-600 scale-105'
-                        : 'bg-white/5'">
-                    {{ $exp->name }}
+        <div x-data="{ openExp: false }">
+            <div class="flex flex-wrap gap-2 mb-4 min-h-[40px] p-2 rounded-xl bg-white/5 border border-dashed border-white/20">
+                <template x-for="id in form.expertises" :key="id">
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 rounded-lg text-sm font-bold animate-in fade-in zoom-in duration-300">
+                        <span x-text="getExpertiseName(id)"></span>
+                        <button type="button" @click="toggleExpertise(id)" class="hover:text-red-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                </template>
+                <template x-if="form.expertises.length === 0">
+                    <span class="text-white/30 text-sm italic p-1">No expertise selected yet...</span>
+                </template>
+            </div>
+
+            <div class="relative" @click.outside="openExp = false">
+                <button type="button" @click="openExp = !openExp"
+                    class="w-full px-6 py-4 rounded-xl bg-black/50 border border-white/20 flex justify-between items-center hover:border-indigo-500 transition">
+                    <span class="text-white/60">Search & Select Expertise</span>
+                    <svg class="w-5 h-5 transition-transform" :class="openExp ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+
+                <div x-show="openExp" x-transition class="absolute z-30 mt-2 w-full max-h-60 overflow-y-auto rounded-xl bg-gray-900 border border-white/20 shadow-2xl">
+                    @foreach($expertises as $exp)
+                        <div @click="toggleExpertise({{ $exp->id }})"
+                            class="px-6 py-3 cursor-pointer hover:bg-indigo-600 transition flex justify-between items-center"
+                            :class="form.expertises.includes({{ $exp->id }}) ? 'bg-indigo-600/30' : ''">
+                            <span>{{ $exp->name }}</span>
+                            <template x-if="form.expertises.includes({{ $exp->id }})">
+                                <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            </template>
+                        </div>
+                    @endforeach
                 </div>
-            @endforeach
+            </div>
         </div>
 
         <input type="hidden" name="expertises" :value="JSON.stringify(form.expertises)">
-
-        <input type="text"
-            name="custom_expertise"
-            x-model="form.custom_expertise"
-            placeholder="Other expertise (optional)"
-            class="mt-6 w-full bg-black/30 rounded-xl px-6 py-3">
+        <input type="text" name="custom_expertise" x-model="form.custom_expertise" placeholder="Other expertise (optional)" class="w-full bg-black/30 rounded-xl px-6 py-3 border border-white/10">
 
         <div class="mt-8 flex justify-between">
-            <button type="button" @click="back()">Back</button>
-            <button type="button" @click="next()">Next</button>
+            <button type="button" @click="back()" class="text-white/50 hover:text-white transition">Back</button>
+            <button type="button" @click="next()" class="px-8 py-3 bg-white text-black font-bold rounded-xl hover:bg-indigo-500 hover:text-white transition">Next</button>
         </div>
     </div>
 
     <!-- STEP 5 : TOOLS -->
-    <div x-show="step === 5"
-         x-transition:enter="transition ease-out duration-500"
-         x-transition:enter-start="opacity-0 translate-y-6"
-         x-transition:enter-end="opacity-100 translate-y-0">
+    <div x-show="step === 5" class="space-y-6"
+        x-transition:enter="transition ease-out duration-500"
+        x-transition:enter-start="opacity-0 translate-y-6"
+        x-transition:enter-end="opacity-100 translate-y-0">
 
-        <h2 class="text-3xl font-bold mb-6 text-center">Tools you use</h2>
+        <h2 class="text-3xl font-bold text-center">Tools you use</h2>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            @foreach($tools as $tool)
-                <div
-                    @click="
-                        form.tools.includes({{ $tool->id }})
-                        ? form.tools.splice(form.tools.indexOf({{ $tool->id }}),1)
-                        : form.tools.push({{ $tool->id }})
-                    "
-                    class="cursor-pointer p-4 rounded-xl border border-white/20 text-center
-                           transition-all duration-300 ease-out
-                           hover:scale-110 hover:shadow-xl"
-                    :class="form.tools.includes({{ $tool->id }})
-                        ? 'bg-indigo-600 scale-105'
-                        : 'bg-white/5'">
-                    {{ $tool->name }}
+        <div x-data="{ openTools: false }">
+            <div class="flex flex-wrap gap-2 mb-4 min-h-[40px] p-2 rounded-xl bg-white/5 border border-dashed border-white/20">
+                <template x-for="id in form.tools" :key="id">
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-amber-600 rounded-lg text-sm font-bold">
+                        <span x-text="getToolName(id)"></span>
+                        <button type="button" @click="toggleTool(id)" class="hover:text-red-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                </template>
+            </div>
+
+            <div class="relative" @click.outside="openTools = false">
+                <button type="button" @click="openTools = !openTools"
+                    class="w-full px-6 py-4 rounded-xl bg-black/50 border border-white/20 flex justify-between items-center hover:border-amber-500 transition">
+                    <span class="text-white/60">Search & Select Tools</span>
+                    <svg class="w-5 h-5 transition-transform" :class="openTools ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+
+                <div x-show="openTools" x-transition class="absolute z-30 mt-2 w-full max-h-60 overflow-y-auto rounded-xl bg-gray-900 border border-white/20 shadow-2xl">
+                    @foreach($tools as $tool)
+                        <div @click="toggleTool({{ $tool->id }})"
+                            class="px-6 py-3 cursor-pointer hover:bg-amber-600 transition flex justify-between items-center"
+                            :class="form.tools.includes({{ $tool->id }}) ? 'bg-amber-600/30' : ''">
+                            <span>{{ $tool->name }}</span>
+                        </div>
+                    @endforeach
                 </div>
-            @endforeach
+            </div>
         </div>
 
         <input type="hidden" name="tools" :value="JSON.stringify(form.tools)">
-
-        <input type="text"
-            name="custom_tool"
-            x-model="form.custom_tool"
-            placeholder="Other tools (optional)"
-            class="mt-6 w-full bg-black/30 rounded-xl px-6 py-3">
+        <input type="text" name="custom_tool" x-model="form.custom_tool" placeholder="Other tools (optional)" class="w-full bg-black/30 rounded-xl px-6 py-3 border border-white/10">
 
         <div class="mt-8 flex justify-between">
-            <button type="button" @click="back()">Back</button>
-            <button type="button" @click="next()">Next</button>
+            <button type="button" @click="back()" class="text-white/50 hover:text-white transition">Back</button>
+            <button type="button" @click="next()" class="px-8 py-3 bg-white text-black font-bold rounded-xl hover:bg-amber-500 hover:text-white transition">Next</button>
         </div>
     </div>
 
@@ -288,7 +308,7 @@
 
             <div class="mt-8 flex justify-between">
                 <button type="button" @click="back()">Back</button>
-                <button type="button" @click="next()">Next</button>
+                <button type="button" @click="next()" class="px-8 py-3 bg-white text-black font-bold rounded-xl hover:bg-amber-500 hover:text-white transition">Next</button>
             </div>
         </div>
     </div>
@@ -313,7 +333,7 @@
      class="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
 
     <div class="text-center animate-pulse">
-        <div class="text-6xl mb-6">🎉</div>
+        <div class="text-6xl mb-6">🚀</div>
         <h2 class="text-3xl font-bold mb-2">Welcome to Crevolio</h2>
         <p class="text-white/70">Preparing your dashboard...</p>
     </div>
@@ -328,6 +348,9 @@ function onboarding() {
         open: false,
         selectedPosition: null,
         success: false,
+
+        expertisesMaster: @json($expertises),
+        toolsMaster: @json($tools),
 
         preview: {
             cover: null,
@@ -344,6 +367,33 @@ function onboarding() {
             custom_tool: '',
             short_description: '',
             description: '',
+        },
+
+        getExpertiseName(id) {
+            const item = this.expertisesMaster.find(i => i.id == id);
+            return item ? item.name : '';
+        },
+        getToolName(id) {
+            const item = this.toolsMaster.find(i => i.id == id);
+            return item ? item.name : '';
+        },
+
+        // Toggle Expertise
+        toggleExpertise(id) {
+            if (this.form.expertises.includes(id)) {
+                this.form.expertises = this.form.expertises.filter(i => i !== id);
+            } else {
+                this.form.expertises.push(id);
+            }
+        },
+
+        // Toggle Tools
+        toggleTool(id) {
+            if (this.form.tools.includes(id)) {
+                this.form.tools = this.form.tools.filter(i => i !== id);
+            } else {
+                this.form.tools.push(id);
+            }
         },
 
         previewImage(e, type) {
