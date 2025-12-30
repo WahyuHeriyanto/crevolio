@@ -31,6 +31,7 @@
     subtitle="Your work, your story."
     description="Create a clean, focused portfolio that highlights your best work and share it with the world."
     direction="right"
+    image="feature-1.png"
 />
 
 
@@ -39,6 +40,7 @@
     subtitle="Collaboration starts here."
     description="Discover people who share your vision and grow together through real collaboration."
     direction="left"
+    image="feature-2.png"
 />
 
 </x-public-layout>

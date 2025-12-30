@@ -6,11 +6,10 @@
 >
 
     <div class="max-w-7xl mx-auto px-10 grid md:grid-cols-2 gap-20 items-center">
-
         {{-- IMAGE --}}
         <div
             class="
-                relative h-[70vh]
+                relative h-[70vh] flex items-center justify-center
                 transform transition-all duration-700 ease-out
                 {{ $direction === 'right' ? 'md:order-1' : 'md:order-2' }}
             "
@@ -18,10 +17,15 @@
                 ? 'opacity-100 translate-x-0'
                 : '{{ $direction === 'right' ? '-translate-x-24' : 'translate-x-24' }} opacity-0'"
         >
-            {{-- placeholder image --}}
-            <div class="absolute inset-0 bg-gradient-to-r from-gray-100 to-white"></div>
+            {{-- Container dibuat transparan tanpa background dan shadow --}}
+            <div class="relative w-full h-full">
+                <img 
+                    src="{{ asset('assets/images/' . $image) }}" 
+                    alt="{{ $title }}" 
+                    class="w-full h-full object-contain"
+                >
+            </div>
         </div>
-
         {{-- TEXT --}}
         <div
             class="

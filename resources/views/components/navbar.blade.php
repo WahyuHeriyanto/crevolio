@@ -5,17 +5,16 @@
         <img
             src="{{ asset('assets/logo/crevolio-white.png') }}"
             alt="Crevolio"
-            class="h-7"
+            class="h-12"
         >
 
         {{-- NAV --}}
         <div class="flex items-center gap-8 text-sm">
-            <a
-                href="#features"
-                class="text-gray-300 hover:text-white transition"
-            >
+            <a href="#features"
+            class="text-sm text-gray-300 hover:text-white transition">
                 Features
             </a>
+
 
             <a
                 href="{{ route('login') }}"

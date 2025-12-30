@@ -7,7 +7,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-black text-white antialiased">
+<body class="bg-white text-gray-900 antialiased">
 
     <x-navbar />
 
