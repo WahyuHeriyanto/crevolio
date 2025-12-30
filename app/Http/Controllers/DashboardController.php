@@ -21,6 +21,12 @@ class DashboardController extends Controller
             'detail.collaborators.user.profile',
             'medias'
         ])
+        ->where(function($query) use ($user) {
+            $query->whereHas('detail.status', function($q) {
+                $q->where('slug', '!=', 'private');
+            })
+            ->orWhere('owner_id', $user->id);
+        })
         ->withCount(['likes', 'saveds' => function($query) use ($user) {
             $query->where('user_id', $user->id);
         }])

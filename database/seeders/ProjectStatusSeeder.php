@@ -6,6 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\ProjectStatus;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class ProjectStatusSeeder extends Seeder
 {
@@ -14,18 +16,24 @@ class ProjectStatusSeeder extends Seeder
      */
     public function run(): void
     {
-        $status = [
-            'In Progress',
-            'Started',
-            'Delayed',
-            'Completed',
+
+        Schema::disableForeignKeyConstraints();
+        ProjectStatus::truncate();
+        Schema::enableForeignKeyConstraints();
+
+        $statuses = [
+            ['id' => 1, 'name' => 'Open'],
+            ['id' => 2, 'name' => 'Public'],
+            ['id' => 3, 'name' => 'Private'],
+            ['id' => 4, 'name' => 'Draft'],
         ];
 
-        foreach ($status as $name) {
-            ProjectStatus::updateOrCreate(
-                ['slug' => Str::slug($name)],
-                ['name' => $name]
-            );
+        foreach ($statuses as $status) {
+                ProjectStatus::create([
+                    'id'   => $status['id'],
+                    'name' => $status['name'],
+                    'slug' => Str::slug($status['name']),
+                ]);
         }
     }
 }

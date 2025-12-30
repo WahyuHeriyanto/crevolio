@@ -5,7 +5,7 @@
         <img
             src="{{ $profile?->background_image
                 ? asset('storage/' . $profile->background_image)
-                : 'https://picsum.photos/1200/300' }}"
+                : '' }}"
             class="w-full h-full object-cover"
         />
     </div>
@@ -20,7 +20,7 @@
             <img
                 src="{{ $profile?->photo_profile
                     ? asset('storage/' . $profile->photo_profile)
-                    : 'https://i.pravatar.cc/150' }}"
+                    : '' }}"
                 class="w-36 h-36 rounded-full border-4 border-white shadow-lg bg-white relative -top-10"
             />
 
@@ -37,18 +37,18 @@
 
                 {{-- FOLLOW STATS --}}
                 <div class="flex gap-6 mt-4 text-sm text-gray-600">
-                    <div class="flex items-center gap-1">
-                        <span class="font-semibold text-black">
+                    <a href="{{ route('follow.list', ['user' => $user->id, 'type' => 'followers']) }}" class="flex items-center gap-1 group">
+                        <span class="font-semibold text-black group-hover:text-indigo-600">
                             {{ $profile?->followers ?? 0 }}
                         </span>
                         <span>Followers</span>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <span class="font-semibold text-black">
+                    </a>
+                    <a href="{{ route('follow.list', ['user' => $user->id, 'type' => 'following']) }}" class="flex items-center gap-1 group">
+                        <span class="font-semibold text-black group-hover:text-indigo-600">
                             {{ $profile?->following ?? 0 }}
                         </span>
                         <span>Following</span>
-                    </div>
+                    </a>
                 </div>
 
                 {{-- TAGS --}}

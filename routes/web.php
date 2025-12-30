@@ -17,6 +17,8 @@ Route::middleware('guest')->group(function () {
     })->name('landing');
 });
 
+Route::view('/privacy-policy', 'pages.privacy')->name('privacy.policy');
+
 Route::middleware(['auth', 'profile.completed.redirect'])->group(function () {
     Route::get('/onboarding', [OnboardingController::class, 'index'])
         ->name('onboarding.index');
@@ -26,6 +28,9 @@ Route::middleware(['auth', 'profile.completed.redirect'])->group(function () {
 });
 
 Route::middleware(['auth', 'profile.completed'])->group(function () {
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
     Route::get('/projects/create', [ProjectController::class, 'create'])
@@ -59,6 +64,11 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
     
     Route::delete('/projects/{project}/leave', [ProjectController::class, 'leave'])
         ->name('projects.leave');
+
+    Route::get('/users/{user}/{type}', [FollowController::class, 'showList'])
+        ->where('user', '[0-9]+')
+        ->where('type', 'followers|following')
+        ->name('follow.list');
     
     Route::post('/follow/{user}', [FollowController::class, 'follow'])
         ->name('follow');

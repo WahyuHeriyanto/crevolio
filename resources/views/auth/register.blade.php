@@ -33,9 +33,11 @@ x-data="{
 
     password: '',
     passwordTouched: false,
+    showPassword: false,
 
     confirm: '',
     confirmTouched: false,
+    showConfirm: false,
 
     checkUsername() {
         if (this.username.length < 3) return;
@@ -85,15 +87,32 @@ x-data="{
 
 {{-- Password --}}
 <div class="mb-2">
-    <input
-        type="password"
-        x-model="password"
-        @focus="passwordTouched = true"
-        name="password"
-        placeholder="Password"
-        required
-        class="w-full rounded-xl border-gray-300"
-    >
+    <div class="relative">
+        <input
+            :type="showPassword ? 'text' : 'password'"
+            x-model="password"
+            @focus="passwordTouched = true"
+            name="password"
+            placeholder="Password"
+            required
+            class="w-full pr-10 rounded-xl border-gray-300 focus:border-black focus:ring-black"
+        >
+        <button
+            type="button"
+            @click="showPassword = !showPassword"
+            class="absolute inset-y-0 right-3 flex items-center text-gray-500"
+        >
+            {{-- Eye Icon --}}
+            <svg x-show="!showPassword" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            {{-- Eye Slash Icon --}}
+            <svg x-show="showPassword" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 012.198-3.568m4.968-1.29A9.969 9.969 0 0112 5c4.478 0 8.268 2.943 9.543 7a9.978 9.978 0 01-4.132 5.411m0 0L3 3l18 18"/>
+            </svg>
+        </button>
+    </div>
 
     <ul x-show="passwordTouched"
         class="text-sm mt-1 space-y-1">
@@ -105,15 +124,30 @@ x-data="{
 
 {{-- Confirm --}}
 <div class="mb-6">
-    <input
-        type="password"
-        x-model="confirm"
-        @focus="confirmTouched = true"
-        name="password_confirmation"
-        placeholder="Confirm password"
-        required
-        class="w-full rounded-xl border-gray-300"
-    >
+    <div class="relative">
+        <input
+            :type="showConfirm ? 'text' : 'password'"
+            x-model="confirm"
+            @focus="confirmTouched = true"
+            name="password_confirmation"
+            placeholder="Confirm password"
+            required
+            class="w-full pr-10 rounded-xl border-gray-300 focus:border-black focus:ring-black"
+        >
+        <button
+            type="button"
+            @click="showConfirm = !showConfirm"
+            class="absolute inset-y-0 right-3 flex items-center text-gray-500"
+        >
+            <svg x-show="!showConfirm" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            <svg x-show="showConfirm" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 012.198-3.568m4.968-1.29A9.969 9.969 0 0112 5c4.478 0 8.268 2.943 9.543 7a9.978 9.978 0 01-4.132 5.411m0 0L3 3l18 18"/>
+            </svg>
+        </button>
+    </div>
 
     <p x-show="confirmTouched && password !== confirm"
         class="text-sm text-red-500 mt-1">

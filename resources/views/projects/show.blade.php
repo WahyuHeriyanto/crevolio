@@ -171,30 +171,37 @@
 
                     @php
                         $hasRequested = auth()->check() ? \App\Models\ProjectAccessRequest::where('project_id', $project->id)->where('requester_id', auth()->id())->first() : null;
+                        $isOpen = $project->detail->status->slug === 'open';
                     @endphp
                     @auth
+                        {{-- Jika bukan pemilik project --}}
                         @if(!$isOwner)
-                            @if(!$isCollaborator)
-                                @if(!$hasRequested)
-                                    <form action="{{ route('projects.join', $project) }}" method="POST" class="flex-1">
-                                        @csrf
-                                        <button type="submit" class="w-full py-4 px-8 rounded-2xl bg-black text-white font-bold hover:bg-gray-800 transition-all shadow-lg">
-                                            Join Project
-                                        </button>
-                                    </form>
-                                @elseif($hasRequested->status === 'pending')
-                                    <button disabled class="flex-1 py-4 px-8 rounded-2xl bg-gray-100 text-gray-400 font-bold cursor-not-allowed">
-                                        Requested
-                                    </button>
-                                @endif
-                            @else
+                            
+                            {{-- KONDISI 1: Jika sudah jadi Collaborator (Munculkan tombol Leave, status project apapun) --}}
+                            @if($isCollaborator)
                                 <form action="{{ route('projects.leave', $project) }}" method="POST" class="flex-1">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="w-full py-4 px-8 rounded-2xl border-2 border-red-500 text-red-500 font-bold hover:bg-red-50 transition-all">
                                         Leave Project
                                     </button>
                                 </form>
+
+                            {{-- KONDISI 2: Jika sudah kirim Request (Munculkan tombol Requested, status project apapun) --}}
+                            @elseif($hasRequested && $hasRequested->status === 'pending')
+                                <button disabled class="flex-1 py-4 px-8 rounded-2xl bg-gray-100 text-gray-400 font-bold cursor-not-allowed">
+                                    Requested
+                                </button>
+
+                            {{-- KONDISI 3: Belum Join & Belum Request (Hanya muncul jika status project 'open') --}}
+                            @elseif($isOpen)
+                                <form action="{{ route('projects.join', $project) }}" method="POST" class="flex-1">
+                                    @csrf
+                                    <button type="submit" class="w-full py-4 px-8 rounded-2xl bg-black text-white font-bold hover:bg-gray-800 transition-all shadow-lg">
+                                        Join Project
+                                    </button>
+                                </form>
                             @endif
+
                         @endif
                     @endauth
                 </div>

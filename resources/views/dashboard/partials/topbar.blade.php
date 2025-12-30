@@ -13,6 +13,10 @@
         </div>
 
         <div class="flex items-center gap-4">
+            {{-- LINK DASHBOARD --}}
+            <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-gray-600 hover:text-black transition-colors">
+                Dashboard
+            </a>
             {{-- ICON NOTIFIKASI --}}
             <a href="{{ route('notifications.index') }}" class="relative p-2 text-gray-500 hover:text-indigo-600 transition-colors">
                 <i class="fa-solid fa-bell text-xl"></i>
@@ -53,6 +57,12 @@
                         class="block px-4 py-2 text-sm hover:bg-gray-50"
                     >
                         Profile
+                    </a>
+                    <a
+                        href="{{ route('profile.edit') }}"
+                        class="block px-4 py-2 text-sm hover:bg-gray-50"
+                    >
+                        Edit Profile
                     </a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

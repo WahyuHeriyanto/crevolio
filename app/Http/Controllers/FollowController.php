@@ -10,6 +10,26 @@ use Illuminate\Support\Facades\DB;
 
 class FollowController extends Controller
 {
+    public function showList(User $user, $type)
+    {
+        
+        if ($type === 'followers') {
+            $userIds = FollowRelation::where('follow_user_id', $user->id)
+                        ->pluck('user_id');
+            $title = "Followers of " . $user->name;
+        } else {
+            $userIds = FollowRelation::where('user_id', $user->id)
+                        ->pluck('follow_user_id');
+            $title = "People followed by " . $user->name;
+        }
+
+        $users = User::whereIn('id', $userIds)
+                    ->with(['profile.careerPosition', 'profile.expertises.expertise'])
+                    ->paginate(20);
+
+        return view('follow.list', compact('users', 'title', 'type', 'user'));
+    }
+
     public function follow(User $user)
     {
         $authId = auth()->id();

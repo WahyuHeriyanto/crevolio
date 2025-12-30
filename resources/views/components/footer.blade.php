@@ -5,7 +5,7 @@
         </div>
 
         <div class="flex gap-6">
-            <a href="#" class="hover:text-black">Privacy Policy</a>
+            <a href="{{ route('privacy.policy') }}" class="hover:text-white transition">Privacy Policy</a>
             <a href="#" class="hover:text-black">About</a>
             <a href="#" class="hover:text-black">Contact</a>
         </div>

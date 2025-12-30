@@ -109,6 +109,19 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
+        $user = auth()->user();
+        $userId = auth()->id();
+
+        $isOwner = auth()->check() && $userId === $project->owner_id;
+
+        $isCollaborator = auth()->check() && $project->detail->collaborators
+        ->where('access_user_id', $userId)
+        ->isNotEmpty();
+
+        if ($project->detail->status->slug === 'private' && !$isOwner && !$isCollaborator) {
+            abort(403, 'Sorry, this project is private :(');
+        }
+
         $project->load([
             'detail.field',
             'detail.status',

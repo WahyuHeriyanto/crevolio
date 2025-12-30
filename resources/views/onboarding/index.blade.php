@@ -6,7 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     @vite(['resources/css/app.css'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        /* Animasi roket meluncur */
+        .rocket-launch {
+            animation: launch 1.5s forwards cubic-bezier(0.42, 0, 0.58, 1);
+        }
+
+        @keyframes launch {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            20% { transform: translateY(10px) scale(1.1); } /* Efek sedikit turun sebelum melesat */
+            100% { transform: translateY(-1000px) scale(1.5); opacity: 0; }
+        }
+
+        /* Animasi getar halus saat idle (menandakan roket siap) */
+        .rocket-ready {
+            animation: floating 2s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-black via-indigo-900 to-black text-white overflow-hidden">
@@ -42,14 +65,16 @@
         <div class="flex gap-10 justify-center">
             <button type="button"
                 @click="form.gender='male'; next()"
-                class="px-10 py-6 rounded-3xl bg-indigo-600 transition-all hover:scale-110">
-                🚀 Male
+                class="px-10 py-6 rounded-3xl bg-indigo-600 text-white transition-all hover:scale-110">
+                <i class="fa-solid fa-mars text-xl"></i> 
+                <span class="font-bold">Male</span>
             </button>
 
             <button type="button"
                 @click="form.gender='female'; next()"
-                class="px-10 py-6 rounded-3xl bg-pink-600 transition-all hover:scale-110">
-                🌙 Female
+                class="px-10 py-6 rounded-3xl bg-pink-600 text-white transition-all hover:scale-110">
+                <i class="fa-solid fa-venus text-xl"></i> 
+                <span class="font-bold">Female</span>
             </button>
         </div>
 
@@ -182,7 +207,7 @@
         </div>
 
         <input type="hidden" name="expertises" :value="JSON.stringify(form.expertises)">
-        <input type="text" name="custom_expertise" x-model="form.custom_expertise" placeholder="Other expertise (optional)" class="w-full bg-black/30 rounded-xl px-6 py-3 border border-white/10">
+        <!-- <input type="text" name="custom_expertise" x-model="form.custom_expertise" placeholder="Other expertise (optional)" class="w-full bg-black/30 rounded-xl px-6 py-3 border border-white/10"> -->
 
         <div class="mt-8 flex justify-between">
             <button type="button" @click="back()" class="text-white/50 hover:text-white transition">Back</button>
@@ -230,7 +255,7 @@
         </div>
 
         <input type="hidden" name="tools" :value="JSON.stringify(form.tools)">
-        <input type="text" name="custom_tool" x-model="form.custom_tool" placeholder="Other tools (optional)" class="w-full bg-black/30 rounded-xl px-6 py-3 border border-white/10">
+        <!-- <input type="text" name="custom_tool" x-model="form.custom_tool" placeholder="Other tools (optional)" class="w-full bg-black/30 rounded-xl px-6 py-3 border border-white/10"> -->
 
         <div class="mt-8 flex justify-between">
             <button type="button" @click="back()" class="text-white/50 hover:text-white transition">Back</button>
@@ -316,12 +341,20 @@
     <!-- STEP 7 : SUBMIT -->
     <div x-show="step === 7"
          x-transition.opacity
-         class="text-center">
+         x-data="{ launched: false }" 
+        class="text-center relative">
+         
+
+        <div class="flex justify-center mb-4">
+            <div :class="launched ? 'rocket-launch' : 'rocket-ready'" class="text-5xl transition-all">
+                 <img src="{{ asset('assets/logo/rocket.png') }}" class="h-20" />
+            </div>
+        </div>
 
         <button type="submit"
-            @click="success = true"
-            class="px-12 py-5 rounded-full bg-indigo-600 transition-all hover:scale-110">
-            🚀 Become a Crevolian
+            @click="launched = true; setTimeout(() => { success = true }, 500)"
+            class="px-12 py-5 rounded-full bg-indigo-600 text-white font-bold text-xl shadow-lg shadow-indigo-500/50 transition-all hover:scale-105 active:scale-95">
+            Become a Crevolian
         </button>
     </div>
 
@@ -333,7 +366,6 @@
      class="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
 
     <div class="text-center animate-pulse">
-        <div class="text-6xl mb-6">🚀</div>
         <h2 class="text-3xl font-bold mb-2">Welcome to Crevolio</h2>
         <p class="text-white/70">Preparing your dashboard...</p>
     </div>

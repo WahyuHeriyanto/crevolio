@@ -6,7 +6,7 @@ window.Alpine = Alpine
 Alpine.plugin(intersect)
 
 Alpine.data('typingHero', () => ({
-    text: 'Show what you build.',
+    text: 'Where Ideas Find Gravity.',
     displayText: '',
     index: 0,
     deleting: false,
