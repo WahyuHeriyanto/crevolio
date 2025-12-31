@@ -11,10 +11,6 @@ class ToolSeeder extends Seeder
     public function run(): void
     {
         $tools = [
-
-            // ======================
-            // Programming Languages
-            // ======================
             'HTML',
             'CSS',
             'JavaScript',
@@ -30,10 +26,6 @@ class ToolSeeder extends Seeder
             'C#',
             'Go',
             'Rust',
-
-            // ======================
-            // Frameworks & Libraries
-            // ======================
             'Laravel',
             'Symfony',
             'CodeIgniter',
@@ -49,10 +41,6 @@ class ToolSeeder extends Seeder
             'React Native',
             'Unity',
             'Unreal Engine',
-
-            // ======================
-            // Design Tools
-            // ======================
             'Figma',
             'Adobe Photoshop',
             'Adobe Illustrator',
@@ -62,20 +50,12 @@ class ToolSeeder extends Seeder
             'Sketch',
             'Framer',
             'Canva',
-
-            // ======================
-            // Database & Backend
-            // ======================
             'MySQL',
             'PostgreSQL',
             'MongoDB',
             'Redis',
             'Firebase',
             'Supabase',
-
-            // ======================
-            // DevOps & Cloud
-            // ======================
             'Docker',
             'Kubernetes',
             'Linux',
@@ -88,16 +68,25 @@ class ToolSeeder extends Seeder
             'Azure',
             'Vercel',
             'Netlify',
-
-            // ======================
-            // Others
-            // ======================
             'REST API',
             'GraphQL',
             'Postman',
             'Notion',
             'Jira',
             'Slack',
+            'Microsoft Word',
+            'Microsoft Excel',
+            'Microsoft Power Point',
+            'Microsoft Azure',
+            'Google Collaboratory',
+            'Google Cloud',
+            'Google Document',
+            'Google Spreadsheet',
+            'TensorFlow',
+            'PyTorch',
+            'Scikit-Learn',
+            'Vertex AI'
+            
         ];
 
         foreach ($tools as $name) {

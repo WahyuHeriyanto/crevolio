@@ -78,6 +78,12 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
         ->name('follow.cancel');
     Route::post('/follow/{user}/toggle', [FollowController::class, 'toggleFollow'])
         ->name('follow.toggle');
+    Route::get('/profile/follow-requests', [FollowController::class, 'followRequests'])
+        ->name('profile.follow-requests');
+    Route::post('/profile/follow-requests/{id}/accept', [FollowController::class, 'acceptRequest'])
+        ->name('profile.accept-request');
+    Route::post('/profile/follow-requests/{id}/decline', [FollowController::class, 'declineRequest'])
+        ->name('profile.decline-request');
 
     Route::post('/projects/{project}/join', [ProjectController::class, 'join'])
         ->name('projects.join');

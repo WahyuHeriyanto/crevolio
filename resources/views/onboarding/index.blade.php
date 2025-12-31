@@ -132,24 +132,31 @@
                               d="M19 9l-7 7-7-7"/>
                     </svg>
                 </button>
+                
 
                 <div x-show="open"
-                     x-transition
-                     class="absolute z-20 mt-2 w-full max-h-60 overflow-y-auto
-                            rounded-xl bg-black/90 border border-white/20 shadow-xl">
-
-                    @foreach($careerPositions as $pos)
-                        <div
-                            @click="
-                                form.career_position_id={{ $pos->id }};
-                                selectedPosition='{{ $pos->name }}';
-                                open=false
-                            "
-                            class="px-6 py-4 cursor-pointer hover:bg-indigo-600 transition">
-                            {{ $pos->name }}
-                        </div>
-                    @endforeach
+                 x-transition
+                 class="absolute z-20 mt-2 w-full rounded-xl bg-black/95 border border-white/20 shadow-xl overflow-hidden">
+                
+                <div class="p-3 border-b border-white/10 bg-white/5">
+                    <input type="text" 
+                           x-model="searchCareer" 
+                           placeholder="Search position..." 
+                           class="w-full bg-white/10 border-none rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-indigo-500 placeholder-white/30 text-white">
                 </div>
+
+                <div class="max-h-60 overflow-y-auto">
+                    <template x-for="pos in filteredCareers()" :key="pos.id">
+                        <div @click="form.career_position_id=pos.id; selectedPosition=pos.name; open=false; searchCareer=''"
+                             class="px-6 py-4 cursor-pointer hover:bg-indigo-600 transition"
+                             x-text="pos.name">
+                        </div>
+                    </template>
+                    <div x-show="filteredCareers().length === 0" class="px-6 py-4 text-white/40 text-sm">
+                        No results found.
+                    </div>
+                </div>
+            </div>
             </div>
 
             <input type="hidden" name="career_position_id" :value="form.career_position_id">
@@ -191,18 +198,27 @@
                     <svg class="w-5 h-5 transition-transform" :class="openExp ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div x-show="openExp" x-transition class="absolute z-30 mt-2 w-full max-h-60 overflow-y-auto rounded-xl bg-gray-900 border border-white/20 shadow-2xl">
-                    @foreach($expertises as $exp)
-                        <div @click="toggleExpertise({{ $exp->id }})"
+                <div x-show="openExp" x-transition class="absolute z-30 mt-2 w-full rounded-xl bg-gray-900 border border-white/20 shadow-2xl overflow-hidden">
+                <div class="p-3 border-b border-white/10 bg-white/5">
+                    <input type="text" 
+                           x-model="searchExp" 
+                           placeholder="Type to filter..." 
+                           class="w-full bg-white/10 border-none rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-indigo-500 placeholder-white/30 text-white">
+                </div>
+
+                <div class="max-h-60 overflow-y-auto">
+                    <template x-for="exp in filteredExpertises()" :key="exp.id">
+                        <div @click="toggleExpertise(exp.id)"
                             class="px-6 py-3 cursor-pointer hover:bg-indigo-600 transition flex justify-between items-center"
-                            :class="form.expertises.includes({{ $exp->id }}) ? 'bg-indigo-600/30' : ''">
-                            <span>{{ $exp->name }}</span>
-                            <template x-if="form.expertises.includes({{ $exp->id }})">
+                            :class="form.expertises.includes(exp.id) ? 'bg-indigo-600/30' : ''">
+                            <span x-text="exp.name"></span>
+                            <template x-if="form.expertises.includes(exp.id)">
                                 <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
                             </template>
                         </div>
-                    @endforeach
+                    </template>
                 </div>
+            </div>
             </div>
         </div>
 
@@ -242,15 +258,24 @@
                     <svg class="w-5 h-5 transition-transform" :class="openTools ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
 
-                <div x-show="openTools" x-transition class="absolute z-30 mt-2 w-full max-h-60 overflow-y-auto rounded-xl bg-gray-900 border border-white/20 shadow-2xl">
-                    @foreach($tools as $tool)
-                        <div @click="toggleTool({{ $tool->id }})"
-                            class="px-6 py-3 cursor-pointer hover:bg-amber-600 transition flex justify-between items-center"
-                            :class="form.tools.includes({{ $tool->id }}) ? 'bg-amber-600/30' : ''">
-                            <span>{{ $tool->name }}</span>
-                        </div>
-                    @endforeach
+                <div x-show="openTools" x-transition class="absolute z-30 mt-2 w-full rounded-xl bg-gray-900 border border-white/20 shadow-2xl overflow-hidden">
+                <div class="p-3 border-b border-white/10 bg-white/5">
+                    <input type="text" 
+                           x-model="searchTools" 
+                           placeholder="Type to filter..." 
+                           class="w-full bg-white/10 border-none rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-amber-500 placeholder-white/30 text-white">
                 </div>
+
+                <div class="max-h-60 overflow-y-auto">
+                    <template x-for="tool in filteredTools()" :key="tool.id">
+                        <div @click="toggleTool(tool.id)"
+                            class="px-6 py-3 cursor-pointer hover:bg-amber-600 transition flex justify-between items-center"
+                            :class="form.tools.includes(tool.id) ? 'bg-amber-600/30' : ''">
+                            <span x-text="tool.name"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
             </div>
         </div>
 
@@ -383,6 +408,11 @@ function onboarding() {
 
         expertisesMaster: @json($expertises),
         toolsMaster: @json($tools),
+        careerPositionsMaster: @json($careerPositions),
+
+        searchCareer: '',
+        searchExp: '',
+        searchTools: '',
 
         preview: {
             cover: null,
@@ -399,6 +429,26 @@ function onboarding() {
             custom_tool: '',
             short_description: '',
             description: '',
+        },
+
+        filteredCareers() {
+            return this.careerPositionsMaster.filter(i => 
+                i.name.toLowerCase().includes(this.searchCareer.toLowerCase())
+            );
+        },
+
+        // Fungsi Filter untuk Expertise
+        filteredExpertises() {
+            return this.expertisesMaster.filter(i => 
+                i.name.toLowerCase().includes(this.searchExp.toLowerCase())
+            );
+        },
+
+        // Fungsi Filter untuk Tools
+        filteredTools() {
+            return this.toolsMaster.filter(i => 
+                i.name.toLowerCase().includes(this.searchTools.toLowerCase())
+            );
         },
 
         getExpertiseName(id) {

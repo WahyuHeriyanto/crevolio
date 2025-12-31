@@ -41,12 +41,14 @@ class DashboardController extends Controller
         ->orderBy('created_at', 'desc')
         ->paginate(10);
 
-        $crevolians = User::with(['profile.expertises.expertise',
-        'profile.careerPosition'])
-        ->where('id', '!=', $user->id)
-        ->latest()
-        ->take(12)
-        ->get();
+        $crevolians = User::with(['profile.expertises.expertise','profile.careerPosition'])
+            ->withCount(['projectAccesses as collaboration_count' => function($query) {
+                $query->whereIn('access_level', [0, 1]);
+            }])
+            ->where('id', '!=', $user->id)
+            ->latest()
+            ->take(15)
+            ->get();
 
         return view('dashboard.index', compact('projects', 'crevolians'));
     }

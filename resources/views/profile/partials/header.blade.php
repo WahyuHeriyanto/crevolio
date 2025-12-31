@@ -5,7 +5,7 @@
         <img
             src="{{ $profile?->background_image
                 ? asset('storage/' . $profile->background_image)
-                : '' }}"
+                : asset('assets/images/photo-background-default.png') }}"
             class="w-full h-full object-cover"
         />
     </div>
@@ -20,7 +20,7 @@
             <img
                 src="{{ $profile?->photo_profile
                     ? asset('storage/' . $profile->photo_profile)
-                    : '' }}"
+                    : asset('assets/images/photo-profile-default.png') }}"
                 class="w-36 h-36 rounded-full border-4 border-white shadow-lg bg-white relative -top-10"
             />
 
@@ -49,6 +49,12 @@
                         </span>
                         <span>Following</span>
                     </a>
+                    <div class="flex items-center gap-1">
+                        <span class="font-semibold text-black">
+                            {{ $user->collaboration_count ?? 0 }}
+                        </span>
+                        <span>Projects</span>
+                    </div>
                 </div>
 
                 {{-- TAGS --}}

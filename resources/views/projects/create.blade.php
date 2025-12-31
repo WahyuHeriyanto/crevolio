@@ -168,24 +168,62 @@
                 </div>
 
                 {{-- PROJECT STATUS --}}
-                <div>
-                    <label class="font-medium text-gray-800">
-                        Project Status
-                    </label>
-                    <select
-                        name="project_status_id"
-                        class="mt-3 w-full rounded-2xl border-gray-300 px-5 py-3"
-                    >
-                        <option value="">Select project status</option>
-                        @foreach ($statuses as $status)
-                            @if ($status->slug === 'draft')
-                                @continue
-                            @endif
-                            <option value="{{ $status->id }}">
-                                {{ $status->name }}
-                            </option>
-                        @endforeach
-                    </select>
+            <div x-data="{ 
+                get statusHint() {
+                    if (selectedStatusSlug === 'open') return 'Anyone can view and join this project.';
+                    if (selectedStatusSlug === 'public') return 'Anyone can view this project.';
+                    if (selectedStatusSlug === 'private') return 'Only you (the owner) can view this project.';
+                    return 'Please select a status to see the visibility rules.';
+                }
+            }">
+                <label class="font-medium text-gray-800">
+                    Project Status
+                </label>
+                
+                <select
+                    name="project_status_id"
+                    x-model="selectedStatusId"
+                    @change="selectedStatusSlug = $event.target.options[$event.target.selectedIndex].getAttribute('data-slug')"
+                    class="mt-3 w-full rounded-2xl border-gray-300 px-5 py-3 focus:ring-black focus:border-black"
+                    required
+                >
+                    <option value="" data-slug="">Select project status</option>
+                    @foreach ($statuses as $status)
+                        @if ($status->slug === 'draft')
+                            @continue
+                        @endif
+                        <option value="{{ $status->id }}" data-slug="{{ $status->slug }}">
+                            {{ $status->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                {{-- DYNAMIC HINT BOX --}}
+                <div class="mt-3 p-4 rounded-2xl border bg-gray-50 flex items-start gap-3 transition-all duration-300"
+                    :class="{
+                        'border-green-200 bg-green-50 text-green-700': selectedStatusSlug === 'open',
+                        'border-blue-200 bg-blue-50 text-blue-700': selectedStatusSlug === 'public',
+                        'border-amber-200 bg-amber-50 text-amber-700': selectedStatusSlug === 'private',
+                        'opacity-60 border-gray-200': !selectedStatusSlug
+                    }">
+                    
+                    {{-- ICONS --}}
+                    <div class="mt-0.5 flex-shrink-0">
+                        <template x-if="selectedStatusSlug === 'open'">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        </template>
+                        <template x-if="selectedStatusSlug === 'public'">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </template>
+                        <template x-if="selectedStatusSlug === 'private'">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </template>
+                        <template x-if="!selectedStatusSlug">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </template>
+                    </div>
+
+                    <p class="text-sm font-medium" x-text="statusHint"></p>
                 </div>
             </div>
 
@@ -282,6 +320,8 @@ function projectForm() {
         saving: false,
         selectedTools: [],
         selectedField: null,
+        selectedStatusId: '',
+        selectedStatusSlug: '',
         fileStore: new DataTransfer(),
 
         addImages(e) {

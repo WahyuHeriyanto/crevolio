@@ -4,7 +4,7 @@
             $unreadCount = \App\Models\UserNotification::where('user_id', auth()->id())->where('is_read', 0)->count();
             $userPhoto = auth()->user()->profile->photo_profile 
                         ? asset('storage/' . auth()->user()->profile->photo_profile) 
-                        : asset('images/default-avatar.png');
+                        : asset('assets/images/photo-profile-default.png');
         @endphp
         
         {{-- LOGO --}}
@@ -13,6 +13,9 @@
         </div>
 
         <div class="flex items-center gap-4">
+            <a href="{{ route('profile.show', Auth::user()->username) }}" class="text-sm font-semibold text-gray-600 hover:text-black transition-colors">
+                My Projects
+            </a>
             {{-- LINK DASHBOARD --}}
             <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-gray-600 hover:text-black transition-colors">
                 Dashboard

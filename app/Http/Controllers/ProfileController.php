@@ -30,6 +30,9 @@ class ProfileController extends Controller
             'profile.tools.tool',
             'profile.socialMedias.category',
         ])
+        ->withCount(['projectAccesses as collaboration_count' => function($query) {
+            $query->whereIn('access_level', [0, 1]);
+        }])
         ->where('username', $username)
         ->firstOrFail();
 

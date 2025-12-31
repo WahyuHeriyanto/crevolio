@@ -17,12 +17,12 @@
         <p class="text-gray-300 text-lg max-w-md">
             Crevolio helps you showcase your work and find people worth building with.
         </p>
-        <div class="mt-10 text-sm text-gray-400">
+        <!-- <div class="mt-10 text-sm text-gray-400">
             Don’t have an account?
             <a href="{{ route('register') }}" class="text-white underline">
                 Register
             </a>
-        </div>
+        </div> -->
     </div>
 
     {{-- RIGHT --}}
@@ -131,6 +131,12 @@
                     Reset here
                 </a>
             </p> -->
+            <div class="text-sm text-gray-500 mt-6 text-center">
+                Don’t have an account?
+                <a href="{{ route('register') }}" class="underline">
+                    Register
+                </a>
+            </div>
         </div>
     </div>
 </body>

@@ -5,7 +5,7 @@
         <img
             src="{{ asset('assets/logo/crevolio-white.png') }}"
             alt="Crevolio"
-            class="h-12"
+            class="h-6"
         >
 
         {{-- NAV --}}

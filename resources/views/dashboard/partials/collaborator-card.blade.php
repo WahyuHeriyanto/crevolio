@@ -3,7 +3,9 @@
     {{-- Profile Photo --}}
     <div class="relative w-20 h-20 mx-auto mb-4">
         <img
-            src="{{ asset('storage/' . ($user->profile->photo_profile ?? 'default.jpg')) }}"
+            src="{{ $user->profile?->photo_profile
+                    ? asset('storage/' . $user->profile->photo_profile)
+                    : asset('assets/images/photo-profile-default.png') }}"
             class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-sm group-hover:scale-105 transition duration-300"
             alt="{{ $user->name }}"
         >
@@ -49,6 +51,13 @@
             <p class="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Following</p>
             <p class="text-sm font-bold">{{ number_format($user->profile->following ?? 0) }}</p>
         </div>
+
+        <div class="w-[1px] h-4 bg-gray-100"></div>
+        <div class="text-center">
+            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Projects</p>
+            <p class="text-sm font-bold text-indigo-600">{{ number_format($user->collaboration_count ?? 0) }}</p>
+        </div>
+
     </div>
 
     <a 
