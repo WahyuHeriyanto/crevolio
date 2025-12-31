@@ -48,4 +48,9 @@ class Project extends Model
     { 
         return $this->hasMany(ProjectSaved::class); 
     }
+
+    public function accessRequests()
+    {
+        return $this->hasMany(ProjectAccessRequest::class, 'project_id');
+    }
 }

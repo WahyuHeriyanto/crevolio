@@ -8,6 +8,7 @@ use App\Models\PortfolioTool;
 use App\Models\ProgressStatus;
 use App\Models\Tool;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
 class PortfolioController extends Controller
@@ -74,7 +75,7 @@ class PortfolioController extends Controller
                          ->with('success', 'Portfolio created successfully.');
     }
 
-    
+
     public function edit(Portfolio $portfolio)
     {
         // Pastikan hanya pemilik yang bisa mengedit
@@ -133,8 +134,12 @@ class PortfolioController extends Controller
 
             // Handle Images (Hanya tambah jika ada upload baru)
             if ($request->hasFile('images')) {
-                // Opsional: Hapus gambar lama jika ingin mengganti total
-                // foreach($portfolio->medias as $media) { \Storage::disk('public')->delete($media->url); $media->delete(); }
+                foreach ($portfolio->medias as $media) {
+                    if (Storage::disk('public')->exists($media->url)) {
+                        Storage::disk('public')->delete($media->url);
+                    }
+                    $media->delete();
+                }
 
                 foreach ($request->file('images') as $image) {
                     $path = $image->store('portfolios', 'public');
@@ -155,8 +160,23 @@ class PortfolioController extends Controller
         if ($portfolio->user_id !== auth()->id()) {
             abort(403);
         }
+        try {
+            DB::transaction(function () use ($portfolio) {
+                foreach ($portfolio->medias as $media) {
+                    if (Storage::disk('public')->exists($media->url)) {
+                        Storage::disk('public')->delete($media->url);
+                    }
+                }
 
-        $portfolio->delete();
-        return back()->with('success', 'Portfolio deleted.');
+                $portfolio->medias()->delete();
+                $portfolio->tools()->delete();
+                $portfolio->delete();
+            });
+
+            return back()->with('success', 'Portfolio deleted successfully.');
+            
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to delete: ' . $e->getMessage());
+        }
     }
 }

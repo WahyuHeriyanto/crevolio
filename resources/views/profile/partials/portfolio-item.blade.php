@@ -54,7 +54,7 @@
                         <a href="{{ route('portfolios.edit', $portfolio->id) }}" class="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-lg text-gray-400 hover:text-amber-500 transition-all">
                             <i class="fa-solid fa-pencil text-sm"></i>
                         </a>
-                        <form action="{{ route('portfolios.destroy', $portfolio->id) }}" method="POST" onsubmit="return confirm('Hapus portfolio ini?')">
+                        <form action="{{ route('portfolios.destroy', $portfolio->id) }}" method="POST" onsubmit="return confirm('Delete this portfolio?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-lg text-gray-400 hover:text-red-500 transition-all">
                                 <i class="fa-solid fa-trash-can text-sm"></i>

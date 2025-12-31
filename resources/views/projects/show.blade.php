@@ -373,12 +373,6 @@ function projectDetail() {
             setTimeout(() => this.copyText = 'Copy Link', 2000);
         },
 
-        confirmDelete() {
-            if(confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-                document.getElementById('delete-project-form').submit();
-            }
-        },
-
         shareWhatsApp() {
             window.open(`https://wa.me/?text=Check out this awesome project: ${window.location.href}`, '_blank');
         },
@@ -423,11 +417,15 @@ function projectDetail() {
         },
 
         confirmDelete() {
-            if(confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-                // Submit delete logic here
-                console.log('Project deleted');
+        if(confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+            const form = document.getElementById('delete-project-form');
+            if (form) {
+                form.submit();
+            } else {
+                console.error('Delete form not found');
             }
-        },
+        }
+    },
 
         alertVectra() {
             alert('Crevolio Vectra 1.0 (Beta) will be available in February 2026');

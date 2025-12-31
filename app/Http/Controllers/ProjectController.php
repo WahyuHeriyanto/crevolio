@@ -202,6 +202,12 @@ class ProjectController extends Controller
         }
 
         if ($request->hasFile('images')) {
+            $oldMedias = $project->medias;
+            foreach ($oldMedias as $media) {
+                Storage::disk('public')->delete($media->url);
+            }
+            $project->medias()->delete();
+
             foreach ($request->file('images') as $file) {
                 $path = $file->store('projects', 'public');
                 $project->medias()->create(['url' => $path]);
@@ -213,11 +219,42 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        if (auth()->id() !== $project->owner_id) abort(403);
-        
-        $project->delete();
-        return redirect()->route('dashboard')->with('success', 'Project deleted successfully');
+        if (auth()->id() !== $project->owner_id) {
+            abort(403, 'Unauthorized action.');
+        }
+        Log::
+        try {
+            DB::transaction(function () use ($project) {
+                $medias = $project->medias; 
+                foreach ($medias as $media) {
+                    if (Storage::disk('public')->exists($media->url)) {
+                        Storage::disk('public')->delete($media->url);
+                    }
+                }
+
+                $project->medias()->delete();
+                $project->likes()->delete();
+                $project->saveds()->delete();
+                $project->accessRequests()->delete();
+                if ($project->detail) {
+                    $project->detail->tools()->delete();
+                    
+                    $project->detail->collaborators()->delete();
+                    
+                    $project->detail()->delete();
+                }
+
+                $project->delete();
+            });
+
+            return redirect()->route('dashboard')->with('success', 'Project and all related data deleted successfully.');
+            
+        } catch (\Exception $e) {
+            // Jika ada error (misal database lock), kembalikan pesan error
+            return redirect()->back()->with('error', 'Failed to delete project: ' . $e->getMessage());
+        }
     }
+    
 
     public function toggleLike(Project $project)
     {
