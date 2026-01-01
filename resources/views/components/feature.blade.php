@@ -1,6 +1,6 @@
 <section
     {{ isset($id) ? "id=$id" : '' }}
-    class="min-h-screen bg-white flex items-center scroll-mt-24"
+    class=" bg-white flex items-center scroll-mt-24 py-20 md:py-32"
     x-data="{ show: false }"
     x-intersect.margin.-150px="show = true"
 >

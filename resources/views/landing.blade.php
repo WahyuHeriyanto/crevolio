@@ -1,12 +1,12 @@
 <x-public-layout>
 
 <section
-    class="min-h-screen flex items-center justify-center text-center px-6 bg-black text-white"
+    class="min-h-screen w-full flex items-center justify-center text-center px-6 bg-black text-white overflow-hidden"
     x-data="typingHero()"
     x-init="start()"
 >
 
-    <div class="max-w-3xl">
+    <div class="max-w-3xl w-full">
         <h1 class="text-5xl md:text-6xl font-bold tracking-tight mb-6 text-white">
             <span x-text="displayText"></span>
             <span class="border-r-2 border-white animate-pulse ml-1"></span>
@@ -34,13 +34,14 @@
     image="feature-1.png"
 />
 
-
-<x-feature
-    title="Find people worth building with"
-    subtitle="Collaboration starts here."
-    description="Discover people who share your vision and grow together through real collaboration."
-    direction="left"
-    image="feature-2.png"
-/>
+<div class="mb-20 md:mb-40">
+    <x-feature
+        title="Find people worth building with"
+        subtitle="Collaboration starts here."
+        description="Discover people who share your vision and grow together through real collaboration."
+        direction="left"
+        image="feature-2.png"
+    />
+</div>
 
 </x-public-layout>
