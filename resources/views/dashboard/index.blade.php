@@ -20,7 +20,7 @@
             {{-- TABS --}}
             <div class="flex gap-8 border-b mb-8 text-sm font-medium">
                 <button
-                    @click="tab = 'projects'"
+                    @click="tab ='projects'; $store.dashboard.setTab('projects')"
                     :class="tab === 'projects'
                         ? 'text-black border-b-2 border-black pb-3'
                         : 'text-gray-400 hover:text-black pb-3'"
@@ -29,7 +29,7 @@
                 </button>
 
                 <button
-                    @click="tab = 'collaborators'"
+                    @click="tab = 'collaborators'; $store.dashboard.setTab('collaborators')"
                     :class="tab === 'collaborators'
                         ? 'text-black border-b-2 border-black pb-3'
                         : 'text-gray-400 hover:text-black pb-3'"
@@ -40,16 +40,8 @@
 
             {{-- PROJECTS FEED --}}
             <div x-show="tab === 'projects'" x-transition class="space-y-8">
-                @forelse ($projects as $project)
-                    @include('dashboard.partials.project-card', ['project' => $project])
-                @empty
-                    <div class="text-center py-20 bg-white rounded-[40px] border-2 border-dashed border-gray-100">
-                        <p class="text-gray-400 font-medium">No projects found in your feed.</p>
-                    </div>
-                @endforelse
-
-                <div class="mt-10">
-                    {{ $projects->links() }}
+                <div id="project-container" class="space-y-8">
+                    @include('dashboard.partials.load-projects')
                 </div>
             </div>
             {{-- COLLABORATORS FEED --}}
@@ -57,16 +49,79 @@
                 x-show="tab === 'collaborators'"
                 x-transition
                 class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                id="crevolian-container"
             >
-                @forelse ($crevolians as $crevolian)
-                    @include('dashboard.partials.collaborator-card', ['user' => $crevolian])
-                @empty
-                    <div class="col-span-full text-center py-20 bg-white rounded-[40px] border-2 border-dashed border-gray-100">
-                        <p class="text-gray-400 font-medium">No other creators found.</p>
-                    </div>
-                @endforelse
+                @include('dashboard.partials.load-crevolians')
+            </div>
+
+            {{-- LOADING INDICATOR GLOBAL (Pindahkan ke luar div tab agar terlihat di keduanya) --}}
+            <div id="loading-state" class="hidden py-10 text-center">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600"></div>
+                <p class="text-gray-500 text-sm mt-2">Loading more projects...</p>
             </div>
         </section>
     </div>
 </div>
 @endsection
+
+<script>
+let projectNextPage = '{{ $projects->nextPageUrl() }}';
+let crevolianNextPage = '{{ $crevolians->nextPageUrl() }}';
+
+let loading = false;
+let currentTab = 'projects';
+
+document.addEventListener('alpine:init', () => {
+    Alpine.store('dashboard', {
+        setTab(tab) {
+            currentTab = tab;
+        }
+    });
+});
+
+window.addEventListener('scroll', () => {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 120) {
+        if (loading) return;
+
+        if (currentTab === 'projects' && projectNextPage) {
+            loadMore(projectNextPage, 'projects');
+        }
+
+        if (currentTab === 'collaborators' && crevolianNextPage) {
+            loadMore(crevolianNextPage, 'crevolians');
+        }
+    }
+});
+
+function loadMore(url, type) {
+    loading = true;
+    document.getElementById('loading-state').classList.remove('hidden');
+
+    fetch(url + '&type=' + type, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (type === 'projects') {
+            projectNextPage = data.nextPage;
+            document
+                .getElementById('project-container')
+                .insertAdjacentHTML('beforeend', data.html);
+        }
+
+        if (type === 'crevolians') {
+            crevolianNextPage = data.nextPage;
+            document
+                .getElementById('crevolian-container')
+                .insertAdjacentHTML('beforeend', data.html);
+        }
+
+        loading = false;
+        document.getElementById('loading-state').classList.add('hidden');
+    })
+    .catch(() => {
+        loading = false;
+        document.getElementById('loading-state').classList.add('hidden');
+    });
+}
+</script>
