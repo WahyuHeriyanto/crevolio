@@ -222,7 +222,6 @@ class ProjectController extends Controller
         if (auth()->id() !== $project->owner_id) {
             abort(403, 'Unauthorized action.');
         }
-        Log::
         try {
             DB::transaction(function () use ($project) {
                 $medias = $project->medias; 
@@ -245,7 +244,8 @@ class ProjectController extends Controller
                 }
 
                 $project->delete();
-            });
+            }
+        );
 
             return redirect()->route('dashboard')->with('success', 'Project and all related data deleted successfully.');
             
