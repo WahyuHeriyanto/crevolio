@@ -3,7 +3,8 @@
 @section('content')
 <div
     class="max-w-7xl mx-auto px-6"
-    x-data="{ tab: 'projects' }"
+    x-data="{ tab: '{{ $activeTab === 'collaborators' ? 'collaborators' : 'projects' }}' }"
+    x-init="$store.dashboard.setTab(tab)"
 >
     <div class="grid grid-cols-12 gap-10">
 
@@ -16,6 +17,57 @@
 
         {{-- MAIN CONTENT --}}
         <section class="col-span-12 lg:col-span-9">
+            {{-- SEARCH & FILTER BAR --}}
+            <div class="bg-white p-4 rounded-3xl border border-gray-100 mb-6 shadow-sm">
+                <form action="{{ route('dashboard') }}" method="GET" class="flex flex-wrap items-center gap-4">
+                    <input type="hidden" name="tab" :value="tab === 'collaborators' ? 'collaborators' : 'projects'">    
+                    {{-- Search Bar --}}
+                    <div class="flex-1 min-w-[200px] relative">
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            :placeholder="tab === 'projects' ? 'Search projects title...' : 'Search Crevolians name...'"
+                            class="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-black">
+                        <div class="absolute left-3 top-2.5 text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    {{-- Dropdown Filter Project Field (Hanya Project) --}}
+                    <template x-if="tab === 'projects'">
+                        <select name="field" class="bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-black">
+                            <option value="">All Fields</option>
+                            @foreach($fields as $field)
+                                <option value="{{ $field->id }}" {{ request('field') == $field->id ? 'selected' : '' }}>{{ $field->name }}</option>
+                            @endforeach
+                        </select>
+                    </template>
+
+                    {{-- Dropdown Filter Expertises (Hanya Crevolians) --}}
+                    <template x-if="tab === 'collaborators'">
+                        <select name="expertise" class="bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-black">
+                            <option value="">All Expertises</option>
+                            @foreach($expertises as $exp)
+                                <option value="{{ $exp->id }}" {{ request('expertise') == $exp->id ? 'selected' : '' }}>{{ $exp->name }}</option>
+                            @endforeach
+                        </select>
+                    </template>
+
+                    {{-- Only Open Checklist (Hanya Project) --}}
+                    <template x-if="tab === 'projects'">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="only_open" value="true" {{ request('only_open') == 'true' ? 'checked' : '' }}
+                                class="rounded border-gray-300 text-black focus:ring-black">
+                            <span class="text-sm font-medium">Only Open Status</span>
+                        </label>
+                    </template>
+
+                    <button type="submit" class="bg-black text-white px-6 py-2 rounded-2xl text-sm font-medium hover:bg-gray-800 transition">
+                        Filter
+                    </button>
+                    <a href="{{ route('dashboard') }}" class="text-xs text-gray-400 hover:text-black underline">Reset</a>
+                </form>
+            </div>
 
             {{-- TABS --}}
             <div class="flex gap-8 border-b mb-8 text-sm font-medium">
@@ -97,25 +149,33 @@ function loadMore(url, type) {
     loading = true;
     document.getElementById('loading-state').classList.remove('hidden');
 
-    fetch(url + '&type=' + type, {
+    // Mengambil parameter pencarian dari URL saat ini agar filter tidak hilang saat scroll
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    let fetchUrl = new URL(url);
+    
+    // Copy semua parameter dari URL browser (search, field, only_open, dll) ke URL Fetch
+    currentUrlParams.forEach((value, key) => {
+        if(key !== 'projects_page' && key !== 'crevolians_page') { // Kecuali page yang dihandle Laravel
+            fetchUrl.searchParams.set(key, value);
+        }
+    });
+    
+    // Tambahkan parameter type
+    fetchUrl.searchParams.set('type', type);
+
+    fetch(fetchUrl.toString(), {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(res => res.json())
     .then(data => {
         if (type === 'projects') {
             projectNextPage = data.nextPage;
-            document
-                .getElementById('project-container')
-                .insertAdjacentHTML('beforeend', data.html);
+            document.getElementById('project-container').insertAdjacentHTML('beforeend', data.html);
         }
-
         if (type === 'crevolians') {
             crevolianNextPage = data.nextPage;
-            document
-                .getElementById('crevolian-container')
-                .insertAdjacentHTML('beforeend', data.html);
+            document.getElementById('crevolian-container').insertAdjacentHTML('beforeend', data.html);
         }
-
         loading = false;
         document.getElementById('loading-state').classList.add('hidden');
     })
