@@ -44,8 +44,10 @@
             <div>
                 <label class="font-medium text-gray-800">Project Images</label>
                 <p class="text-sm text-gray-500 mb-4">
-                    Upload up to 5 images
+                    Upload up to 5 images (Optimization enabled)
                 </p>
+
+                <div x-show="errorMessage" x-text="errorMessage" class="mb-4 text-sm text-red-600 font-medium"></div>
 
                 <input
                     type="file"
@@ -323,26 +325,58 @@ function projectForm() {
         selectedStatusId: '',
         selectedStatusSlug: '',
         fileStore: new DataTransfer(),
+        errorMessage: '',
 
         addImages(e) {
+            this.errorMessage = ''
             const files = Array.from(e.target.files)
 
             files.forEach(file => {
-                if (this.images.length >= 5) return
+                // Cek limit 5 gambar
+                if (this.images.length >= 5) {
+                    this.errorMessage = 'Maximum 5 images allowed.';
+                    return;
+                }
 
-                this.images.push({
-                    id: Date.now() + Math.random(),
-                    file: file,
-                    url: URL.createObjectURL(file)
-                })
+                // Tampilkan loading sederhana jika perlu, tapi Compressor.js sangat cepat
+                new Compressor(file, {
+                    quality: 0.6,      // Kompres kualitas ke 60% (Sangat efektif mengecilkan size)
+                    maxWidth: 1600,    // Resolusi lebar max 1600px (Sangat cukup untuk web)
+                    convertSize: 1000000, // File di atas 1MB otomatis di-convert/kompres
+                    
+                    success: (result) => {
+                        // 'result' adalah Blob hasil kompresi
+                        // Kita bungkus lagi jadi File object agar bisa masuk ke DataTransfer
+                        const compressedFile = new File([result], file.name, {
+                            type: result.type,
+                            lastModified: Date.now(),
+                        });
 
-                this.fileStore.items.add(file)
-            })
-            this.$refs.imageInput.files = this.fileStore.files
+                        // Tambahkan ke array preview
+                        this.images.push({
+                            id: Date.now() + Math.random(),
+                            file: compressedFile,
+                            url: URL.createObjectURL(compressedFile)
+                        });
+
+                        // Update DataTransfer (File yang akan dikirim ke Laravel)
+                        this.fileStore.items.add(compressedFile);
+                        this.$refs.imageInput.files = this.fileStore.files;
+                    },
+                    error: (err) => {
+                        console.error(err.message);
+                        this.errorMessage = 'Failed to process image.';
+                    },
+                });
+            });
+
+            // Reset input agar bisa pilih file yang sama jika dihapus
+            e.target.value = '';
         },
 
         removeImage(index) {
             this.images.splice(index, 1)
+            this.errorMessage = ''
             this.fileStore = new DataTransfer()
             this.images.forEach(img => {
                 this.fileStore.items.add(img.file)

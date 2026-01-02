@@ -210,33 +210,63 @@ function projectForm() {
         addImages(e) {
             const files = Array.from(e.target.files)
             files.forEach(file => {
-                if (this.images.length >= 10) return // Limit dinaikkan sedikit untuk edit
-                this.images.push({
-                    id: Date.now() + Math.random(),
-                    file: file,
-                    url: URL.createObjectURL(file),
-                    isExisting: false
-                })
-                this.fileStore.items.add(file)
-            })
-            this.$refs.imageInput.files = this.fileStore.files
+                // Cek total gambar (Existing + New)
+                if (this.images.length >= 10) {
+                    this.errorMessage = 'Maximum 10 images allowed.';
+                    return;
+                }
+
+                // Jalankan Kompresi
+                new Compressor(file, {
+                    quality: 0.6,
+                    maxWidth: 1600,
+                    success: (result) => {
+                        const compressedFile = new File([result], file.name, {
+                            type: result.type,
+                        });
+
+                        // Tambah ke array preview
+                        this.images.push({
+                            id: Date.now() + Math.random(),
+                            file: compressedFile,
+                            url: URL.createObjectURL(compressedFile),
+                            isExisting: false
+                        });
+
+                        // Masukkan ke fileStore untuk dikirim ke backend
+                        this.updateFileStore();
+                    },
+                    error(err) {
+                        console.error(err.message);
+                    },
+                });
+            });
+            // Reset input agar bisa pilih file yang sama
+            e.target.value = '';
         },
 
         removeImage(index) {
             const img = this.images[index];
+            
+            // Konfirmasi jika menghapus gambar lama yang sudah ada di server
             if(img.isExisting) {
-                // Opsional: Tambahkan logika untuk hapus file di server via AJAX 
-                // atau kumpulkan ID yang akan dihapus di hidden input
-                if(!confirm('Delete this existing image?')) return;
+                if(!confirm('This will remove the image forever. Continue?')) return;
             }
             
-            this.images.splice(index, 1)
-            this.fileStore = new DataTransfer()
-            this.images.filter(i => !i.isExisting).forEach(img => {
-                this.fileStore.items.add(img.file)
-            })
-            this.$refs.imageInput.files = this.fileStore.files
-            this.current = Math.max(0, this.current - 1)
+            this.images.splice(index, 1);
+            this.updateFileStore();
+            this.current = Math.max(0, this.current - 1);
+        },
+
+        // Helper untuk sinkronisasi fileStore dengan array images
+        updateFileStore() {
+            this.fileStore = new DataTransfer();
+            this.images.forEach(img => {
+                if (!img.isExisting && img.file) {
+                    this.fileStore.items.add(img.file);
+                }
+            });
+            this.$refs.imageInput.files = this.fileStore.files;
         },
 
         addTool(e) {

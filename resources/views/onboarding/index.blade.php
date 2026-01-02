@@ -7,6 +7,7 @@
 
     @vite(['resources/css/app.css'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         /* Animasi roket meluncur */
@@ -310,8 +311,9 @@
             <!-- COVER -->
             <label class="block cursor-pointer">
                 <input type="file" name="background_image" class="hidden"
-                       accept="image/*"
-                       @change="previewImage($event,'cover')">
+                    accept="image/*"
+                    x-ref="bgInput"
+                    @change="previewImage($event,'cover')">
 
                 <div class="h-44 rounded-2xl bg-white/10 overflow-hidden
                             flex items-center justify-center
@@ -328,8 +330,9 @@
             <div class="flex justify-center -mt-14 mb-6">
                 <label class="cursor-pointer">
                     <input type="file" name="photo_profile" class="hidden"
-                           accept="image/*"
-                           @change="previewImage($event,'avatar')">
+                        accept="image/*"
+                        x-ref="avatarInput"
+                        @change="previewImage($event,'avatar')">
 
                     <div class="w-28 h-28 rounded-full bg-white/10 border-4 border-black
                                 overflow-hidden flex items-center justify-center
@@ -419,6 +422,49 @@ function onboarding() {
             avatar: null,
         },
 
+        stores: {
+            cover: new DataTransfer(),
+            avatar: new DataTransfer()
+        },
+
+        previewImage(e, type) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Tentukan setting berdasarkan tipe (Avatar lebih kecil dari Background)
+            const options = {
+                quality: 0.6,
+                maxWidth: type === 'avatar' ? 600 : 1600, // Background lebih lebar
+                success: (result) => {
+                    // 1. Buat object file baru dari hasil kompresi
+                    const compressedFile = new File([result], file.name, {
+                        type: result.type,
+                        lastModified: Date.now(),
+                    });
+
+                    // 2. Masukkan ke DataTransfer storage sesuai tipe
+                    const store = type === 'avatar' ? this.stores.avatar : this.stores.cover;
+                    store.items.clear(); // Hapus file sebelumnya
+                    store.items.add(compressedFile);
+
+                    // 3. Pasangkan kembali ke input file HTML agar terkirim saat submit
+                    e.target.files = store.files;
+
+                    // 4. Update preview UI
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        this.preview[type === 'avatar' ? 'avatar' : 'cover'] = reader.result;
+                    };
+                    reader.readAsDataURL(compressedFile);
+                },
+                error(err) {
+                    console.error('Compression error:', err.message);
+                },
+            };
+
+            new Compressor(file, options);
+        },
+
         form: {
             gender: null,
             birth: null,
@@ -476,14 +522,6 @@ function onboarding() {
             } else {
                 this.form.tools.push(id);
             }
-        },
-
-        previewImage(e, type) {
-            const file = e.target.files[0]
-            if (!file) return
-            const reader = new FileReader()
-            reader.onload = () => this.preview[type] = reader.result
-            reader.readAsDataURL(file)
         },
 
         next() { if (this.step < 7) this.step++ },

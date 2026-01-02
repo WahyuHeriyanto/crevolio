@@ -10,6 +10,21 @@ use App\Http\Controllers\SavedProjectController;
 use App\Http\Controllers\PortfolioController;
 use Illuminate\Support\Facades\Route;
 
+
+$baseDomain = str_replace(['http://', 'https://'], '', config('app.url'));
+
+Route::domain('vectra.' . $baseDomain)->group(function () {
+    
+    // Landing Page Vectra
+    Route::get('/', function () {
+        return view('vectra.landing');
+    })->name('vectra.index');
+
+    Route::middleware(['auth', 'profile.completed'])->get('/dashboard', function () {
+        return view('vectra.dashboard');
+    })->name('vectra.dashboard');
+});
+
 //Guest
 Route::middleware('guest')->group(function () {
     Route::get('/', function () {
