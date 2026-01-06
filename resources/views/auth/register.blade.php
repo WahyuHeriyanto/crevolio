@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @vite(['resources/css/app.css'])
     <script defer src="//unpkg.com/alpinejs"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body class="min-h-screen grid md:grid-cols-2">
@@ -154,6 +155,20 @@ x-data="{
             Passwords do not match
     </p>
 </div>
+
+{{-- Cloudflare Turnstile --}}
+<div class="mb-4">
+    <div 
+        class="cf-turnstile"
+        data-sitekey="{{ config('services.turnstile.site_key') }}"
+        data-theme="light">
+    </div>
+
+    @error('cf-turnstile-response')
+        <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+    @enderror
+</div>
+
 
 <button
     :disabled="!canSubmit"

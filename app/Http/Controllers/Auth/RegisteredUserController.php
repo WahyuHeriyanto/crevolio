@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 
 class RegisteredUserController extends Controller
 {
@@ -38,7 +39,23 @@ class RegisteredUserController extends Controller
             // 'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
+            'cf-turnstile-response' => ['required'],
         ]);
+
+        $response = Http::asForm()->post(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+            [
+                'secret' => config('services.turnstile.secret_key'),
+                'response' => $request->input('cf-turnstile-response'),
+                'remoteip' => $request->ip(),
+            ]
+        );
+
+        if (! $response->json('success')) {
+            return back()
+                ->withErrors(['cf-turnstile-response' => 'Captcha verification failed.'])
+                ->withInput();
+        }
 
         $name = $request->first_name.' '.$request->last_name;
 
