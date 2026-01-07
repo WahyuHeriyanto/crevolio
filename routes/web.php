@@ -8,6 +8,7 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SavedProjectController;
 use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -27,9 +28,10 @@ Route::domain('vectra.' . $baseDomain)->group(function () {
 
 //Guest
 Route::middleware('guest')->group(function () {
-    Route::get('/', function () {
-        return view('landing');
-    })->name('landing');
+    // Route::get('/', function () {
+    //     return view('landing');
+    // })->name('landing');
+    Route::get('/', [LandingController::class, 'index'])->name('landing');
 });
 
 Route::view('/privacy-policy', 'pages.privacy')->name('privacy.policy');
