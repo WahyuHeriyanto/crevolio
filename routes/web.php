@@ -9,6 +9,10 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SavedProjectController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Vectra\DashboardController as VectraDashboardController;
+use App\Http\Controllers\Vectra\RoomController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -21,9 +25,15 @@ Route::domain('vectra.' . $baseDomain)->group(function () {
         return view('vectra.landing');
     })->name('vectra.index');
 
-    Route::middleware(['auth', 'profile.completed'])->get('/dashboard', function () {
-        return view('vectra.dashboard');
-    })->name('vectra.dashboard');
+    Route::middleware(['auth', 'profile.completed'])->group(function () {
+
+        Route::get('/dashboard', [VectraDashboardController::class, 'index'])
+            ->name('vectra.dashboard');
+
+        Route::get('/rooms', [RoomController::class, 'index'])
+            ->name('vectra.rooms');
+
+    });
 });
 
 //Guest
@@ -118,6 +128,15 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
         ->name('projects.saved');
 
     Route::resource('portfolios', PortfolioController::class)->except(['index', 'show']);
+
+    Route::get('/chat/{conversation}', [ConversationController::class, 'show'])
+        ->name('chat.show');
+
+    Route::post('/chat/{conversation}/send', [MessageController::class, 'store'])
+        ->name('chat.send');
+
+    Route::post('/chat/personal/{user}', [ConversationController::class, 'createPersonal'])
+        ->name('chat.personal');
 
     Route::get('/profile/{username}/export', [ProfileController::class, 'export'])
     ->name('profile.export');
