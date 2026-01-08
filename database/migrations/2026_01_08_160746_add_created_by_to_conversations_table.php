@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('project_acceses', function (Blueprint $table) {
-            $table->softDeletes();
+        Schema::table('conversations', function (Blueprint $table) {
+            $table->foreignId('created_by')
+                ->after('type')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->index(['project_id', 'type']);
         });
     }
 
@@ -21,8 +26,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('project_acceses', function (Blueprint $table) {
-            $table->softDeletes();
+        Schema::table('conversations', function (Blueprint $table) {
+            //
         });
     }
 };

@@ -12,6 +12,7 @@ class Conversation extends Model
     protected $fillable = [
         'type',
         'project_id',
+        'created_by',
     ];
 
     public $incrementing = false;

@@ -18,7 +18,10 @@
             $collabs = $detail?->collaborators ?? collect();
         @endphp
 
-        <div class="group bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col">
+        <div
+    class="group bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col"
+    onclick="window.location='{{ route('vectra.rooms', $project->id) }}'"
+>
             <div class="relative aspect-video bg-gray-100 shrink-0 overflow-hidden">
                 @if($cover)
                     <img src="{{ asset('storage/'.$cover->url) }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />

@@ -6,50 +6,69 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Conversation;
+use App\Models\ConversationParticipant;
 
 class RoomController extends Controller
 {
-    public function index(Request $request)
+    public function index(Project $project)
     {
-        $userId = auth()->id();
+        $user = auth()->user();
 
         /**
-         * STEP 1
-         * Ambil project pertama yang user ikut (via ProjectDetail → collaborators)
+         * 1. VALIDASI AKSES PROJECT
          */
-        $project = Project::whereHas('detail.collaborators', function ($q) use ($userId) {
-            $q->where('access_user_id', $userId);
-        })
-        ->with([
-            'detail.collaborators.user.profile',
-        ])
-        ->firstOrFail();
+        abort_unless(
+            $project->owner_id === $user->id ||
+            $project->detail->collaborators()
+                ->where('access_user_id', $user->id)
+                ->exists(),
+            403
+        );
 
         /**
-         * STEP 2
-         * Ambil / buat conversation group per project
+         * 2. AMBIL / BUAT CONVERSATION GROUP
          */
-        $conversation = Conversation::firstOrCreate([
-            'project_id' => $project->id,
-            'type'       => 'group',
-        ]);
+        $conversation = Conversation::firstOrCreate(
+            [
+                'project_id' => $project->id,
+                'type' => 'group',
+            ],
+            [
+                'created_by' => $user->id,
+            ]
+        );
 
         /**
-         * STEP 3
-         * Ambil messages
+         * 3. SYNC PARTICIPANTS (COLLABORATORS)
          */
+        $collaborators = $project->detail->collaborators;
+
+        foreach ($collaborators as $collab) {
+            ConversationParticipant::firstOrCreate([
+                'conversation_id' => $conversation->id,
+                'user_id' => $collab->access_user_id,
+            ]);
+        }
+
+        /**
+         * 4. LOAD DATA
+         */
+        $participants = $project->detail
+            ->collaborators()
+            ->with('user.profile')
+            ->get();
+
         $messages = $conversation->messages()
             ->with('sender.profile')
-            ->latest()
+            ->oldest() 
             ->take(50)
-            ->get()
-            ->reverse(); // biar urut bawah kayak chat normal
+            ->get();
 
-        return view('vectra.rooms', [
-            'project'      => $project,
-            'participants' => $project->detail->collaborators,
-            'conversation' => $conversation,
-            'messages'     => $messages,
-        ]);
+        return view('vectra.rooms', compact(
+            'project',
+            'conversation',
+            'participants',
+            'messages'
+        ));
     }
 }

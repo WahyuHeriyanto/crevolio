@@ -30,8 +30,8 @@ Route::domain('vectra.' . $baseDomain)->group(function () {
         Route::get('/dashboard', [VectraDashboardController::class, 'index'])
             ->name('vectra.dashboard');
 
-        Route::get('/rooms', [RoomController::class, 'index'])
-            ->name('vectra.rooms');
+        Route::get('/rooms/{project}', [RoomController::class, 'index'])
+        ->name('vectra.rooms');
 
     });
 });
