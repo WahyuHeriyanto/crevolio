@@ -6,10 +6,21 @@
             $pendingRequestsCount = \App\Models\FollowRequest::where('user_id', auth()->id())->count();
     @endphp
     <div class="flex items-center gap-4 mb-4">
-        <img
-            src="{{ $userPhoto }}"
-            class="w-14 h-14 rounded-full"
-        />
+        <div class="relative">
+            <img
+                src="{{ $userPhoto }}"
+                class="w-14 h-14 rounded-full object-cover"
+            />
+
+            @if(auth()->user()->profile?->isOnline())
+                <span
+                    class="absolute bottom-0 right-0 w-4 h-4
+                        bg-emerald-500 border-2 border-white rounded-full
+                        ring-2 ring-emerald-300 animate-pulse"
+                    title="Online"
+                ></span>
+            @endif
+        </div>
         <div>
             <div class="font-semibold">
                 {{ Auth::user()->name ?? 'Your Name' }}

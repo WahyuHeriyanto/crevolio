@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class UserProfile extends Model
 {
@@ -18,8 +19,25 @@ class UserProfile extends Model
         'status',
         'followers',
         'following',
-        'last_seen_at'
+        'last_seen_at'=> 'datetime',
     ];
+
+    public function isOnline(): bool
+    {
+        if (! $this->last_seen_at) {
+            return false;
+        }
+
+        return Carbon::parse($this->last_seen_at)
+            ->gt(now()->subMinutes(2));
+    }
+
+    public function lastSeenForHumans(): ?string
+    {
+        return $this->last_seen_at
+            ? Carbon::parse($this->last_seen_at)->diffForHumans()
+            : null;
+    }
 
     public function expertises()
     {

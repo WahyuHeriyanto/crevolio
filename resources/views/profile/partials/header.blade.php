@@ -17,12 +17,25 @@
         <div class="flex items-end gap-6">
 
             {{-- AVATAR --}}
-            <img
-                src="{{ $profile?->photo_profile
-                    ? asset('storage/' . $profile->photo_profile)
-                    : asset('assets/images/photo-profile-default.png') }}"
-                class="w-36 h-36 rounded-full border-4 border-white shadow-lg bg-white relative -top-10"
-            />
+            <div class="relative -top-10">
+                <img
+                    src="{{ $profile?->photo_profile
+                        ? asset('storage/' . $profile->photo_profile)
+                        : asset('assets/images/photo-profile-default.png') }}"
+                    class="w-36 h-36 rounded-full border-4 border-white shadow-lg bg-white object-cover"
+                />
+
+                @if($profile?->isOnline())
+                    <span
+                        class="absolute bottom-0 right-0
+                            w-5 h-5 bg-emerald-500
+                            border-2 border-white rounded-full
+                            translate-x-1 translate-y-1
+                            ring-2 ring-emerald-300 animate-pulse"
+                        title="Online"
+                    ></span>
+                @endif
+            </div>
 
             {{-- INFO CARD --}}
             <div class="bg-white/90 backdrop-blur rounded-xl px-6 py-4 shadow-sm max-w-xl">
