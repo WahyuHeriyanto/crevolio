@@ -28,5 +28,30 @@ class MessageController extends Controller
 
         return back();
     }
+
+    public function update(Request $request, Message $message)
+    {
+        if ($message->sender_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $request->validate(['message' => 'required']);
+
+        $message->update([
+            'content' => ['text' => $request->message, 'is_edited' => true]
+        ]);
+
+        return back();
+    }
+
+    public function destroy(Message $message)
+    {
+        if ($message->sender_id !== auth()->id()) {
+            return back()->with('error', 'Unauthorized');
+        }
+
+        $message->delete();
+        return back();
+    }
 }
 

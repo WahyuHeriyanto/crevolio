@@ -28,6 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // if ($request->getHttpHost() == 'vectra.' . config('app.url')) {
+        //     return redirect()->route('vectra.dashboard');
+        // }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

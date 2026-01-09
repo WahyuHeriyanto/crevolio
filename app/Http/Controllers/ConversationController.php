@@ -31,8 +31,21 @@ class ConversationController extends Controller
 
     public function show(Conversation $conversation)
     {
-        $messages = $conversation->messages()->with('sender')->latest()->paginate(30);
-        return view('chat.show', compact('conversation', 'messages'));
+        $messages = $conversation->messages()->with('sender.profile')->oldest()->get();
+        $participants = $conversation->participants()->with('user.profile')->get();
+        $project = $conversation->project;
+
+        return view('vectra.rooms', compact('conversation', 'messages', 'participants', 'project'));
+    }
+
+    public function clearMessages(Conversation $conversation)
+    {
+        if ($conversation->project && $conversation->project->owner_id !== auth()->id()) {
+            return back()->with('error', 'Only the project owner can clear the chat room.');
+        }
+
+        $conversation->messages()->delete();
+        return back()->with('success', 'Chat cleared');
     }
 }
 

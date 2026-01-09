@@ -138,6 +138,10 @@ Route::middleware(['auth', 'profile.completed'])->group(function () {
     Route::post('/chat/personal/{user}', [ConversationController::class, 'createPersonal'])
         ->name('chat.personal');
 
+    Route::put('/chat/message/{message}', [MessageController::class, 'update'])->name('chat.update');
+    Route::delete('/chat/message/{message}', [MessageController::class, 'destroy'])->name('chat.message.destroy');
+    Route::post('/chat/{conversation}/clear', [ConversationController::class, 'clearMessages'])->name('chat.clear');
+
     Route::get('/profile/{username}/export', [ProfileController::class, 'export'])
     ->name('profile.export');
 });
