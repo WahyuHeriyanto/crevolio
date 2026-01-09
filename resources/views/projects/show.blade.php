@@ -164,10 +164,10 @@
                 </div>
 
                 <div class="flex flex-col md:flex-row gap-4 pt-6">
-                    <button @click="alertVectra()" class="flex-1 py-4 px-8 rounded-2xl bg-gray-200 text-gray-500 font-bold hover:bg-gray-300 transition-all flex items-center justify-center gap-2">
+                    <a href="{{ route('vectra.dashboard') }}" class="flex-1 py-4 px-8 rounded-2xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-100">
                         <i class="fa-solid fa-rocket"></i>
                         Run Crevolio Vectra 1.0
-                    </button>
+                    </a>
 
                     @php
                         $hasRequested = auth()->check() ? \App\Models\ProjectAccessRequest::where('project_id', $project->id)->where('requester_id', auth()->id())->first() : null;
@@ -179,6 +179,11 @@
                             
                             {{-- KONDISI 1: Jika sudah jadi Collaborator (Munculkan tombol Leave, status project apapun) --}}
                             @if($isCollaborator)
+                                <a href="{{ route('vectra.rooms', $project->id) }}" 
+                                class="flex-1 py-4 px-8 rounded-2xl bg-emerald-500 text-white font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-100">
+                                    <i class="fa-solid fa-comments"></i>
+                                    Chat Group
+                                </a>
                                 <form action="{{ route('projects.leave', $project) }}" method="POST" class="flex-1">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="w-full py-4 px-8 rounded-2xl border-2 border-red-500 text-red-500 font-bold hover:bg-red-50 transition-all">

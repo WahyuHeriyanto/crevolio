@@ -20,6 +20,10 @@
         <div class="flex items-center gap-4">
             {{-- LINK HANYA UNTUK YANG SUDAH LOGIN --}}
             @auth
+                <a href="{{ route('vectra.dashboard') }}" 
+                class="text-sm font-bold text-purple-600 hover:text-purple-800 transition-colors">
+                    Go Vectra
+                </a>
                 <a href="{{ route('profile.show', auth()->user()->username) }}" class="text-sm font-semibold text-gray-600 hover:text-black transition-colors">
                     My Projects
                 </a>
