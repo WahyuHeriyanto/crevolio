@@ -79,4 +79,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(ProjectAccess::class, 'access_user_id');
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->roles()->where('slug', 'admin')->exists();
+    }
 }

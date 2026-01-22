@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\EnsureProfileCompleted;
 use App\Http\Middleware\RedirectIfProfileCompleted;
 use App\Http\Middleware\UpdateLastSeen;
+use App\Http\Middleware\AdminOnly;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'profile.completed' => EnsureProfileCompleted::class,
             'profile.completed.redirect' => RedirectIfProfileCompleted::class,
+            'admin' => AdminOnly::class,
         ]);
         $middleware->web(append: [
             UpdateLastSeen::class,

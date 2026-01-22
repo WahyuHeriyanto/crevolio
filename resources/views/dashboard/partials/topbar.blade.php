@@ -13,9 +13,14 @@
         @endphp
         
         {{-- LOGO --}}
-        <div class="flex items-center gap-2 font-bold text-lg">
+        <!-- <div class="flex items-center gap-2 font-bold text-lg">
             <a href="/">Crevolio</a>
-        </div>
+        </div> -->
+        <img 
+            src="{{ asset('assets/logo/crevolio-black-text-only.png') }}" 
+            alt="Crevolio"
+            class="h-6 object-contain"
+        />
 
         <div class="flex items-center gap-4">
             {{-- LINK HANYA UNTUK YANG SUDAH LOGIN --}}
