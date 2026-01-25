@@ -28,7 +28,7 @@
         </h1>
 
         <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-            Find people worth building with. Discover inspiring projects and connect with creators.
+            Crevolio is a collaboration platform designed to help developers, designers, and creators connect with project owners and work together on real-world projects.
         </p>
 
         <a href="{{ route('login') }}"
