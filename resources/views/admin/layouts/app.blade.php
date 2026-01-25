@@ -43,6 +43,11 @@
                 <a href="{{ route('admin.master-users.index') }}" 
                    class="flex items-center gap-4 px-6 py-4 hover:bg-white/10 transition-colors {{ request()->routeIs('admin.master-users.*') ? 'bg-white/10 border-l-4 border-blue-500' : '' }}">
                     <i class="fa-solid fa-user-gear text-lg"></i>
+                    <span x-show="sidebarOpen" class="font-medium whitespace-nowrap">Overview</span>
+                </a>
+                <a href="{{ route('admin.master-users.index') }}" 
+                   class="flex items-center gap-4 px-6 py-4 hover:bg-white/10 transition-colors {{ request()->routeIs('admin.master-users.*') ? 'bg-white/10 border-l-4 border-blue-500' : '' }}">
+                    <i class="fa-solid fa-user-gear text-lg"></i>
                     <span x-show="sidebarOpen" class="font-medium whitespace-nowrap">Master User</span>
                 </a>
             </nav>

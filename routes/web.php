@@ -47,6 +47,10 @@ Route::middleware('guest')->group(function () {
 
 Route::view('/privacy-policy', 'pages.privacy')->name('privacy.policy');
 
+Route::get('/terms-of-service', function () {
+    return view('pages.terms');
+})->name('terms.of.service');
+
 Route::middleware(['auth', 'profile.completed.redirect'])->group(function () {
     Route::get('/onboarding', [OnboardingController::class, 'index'])
         ->name('onboarding.index');
