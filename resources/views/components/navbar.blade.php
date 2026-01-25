@@ -14,8 +14,15 @@
             class="text-sm text-gray-300 hover:text-white transition">
                 Features
             </a>
+            <a href="{{ route('privacy.policy') }}"
+            class="text-gray-300 hover:text-white transition">
+                Privacy
+            </a>
 
-
+            <a href="{{ route('terms.of.service') }}"
+            class="text-gray-300 hover:text-white transition">
+                Terms
+            </a>
             <a
                 href="{{ route('login') }}"
                 class="text-gray-300 hover:text-white transition"

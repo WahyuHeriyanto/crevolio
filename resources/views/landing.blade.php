@@ -5,6 +5,12 @@
     x-data="typingHero()"
     x-init="start()"
 >
+    {{-- Semantic clarity for Google (invisible, no UI impact) --}}
+    <h2 class="sr-only">
+        Crevolio is a web-based collaboration platform where creators discover projects,
+        connect with project owners, and collaborate on real-world work.
+    </h2>
+
     {{-- Background Layer --}}
     <div class="stars-container"></div>
     
@@ -27,8 +33,10 @@
             <span class="border-r-4 border-indigo-500 animate-pulse ml-1"></span>
         </h1>
 
+        {{-- Strengthened purpose sentence (still clean & aesthetic) --}}
         <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-            Crevolio is a collaboration platform designed to help developers, designers, and creators connect with project owners and work together on real-world projects.
+            Crevolio is a collaboration platform where developers, designers, and creators
+            discover projects, connect with project owners, and collaborate on real-world work.
         </p>
 
         <a href="{{ route('login') }}"
