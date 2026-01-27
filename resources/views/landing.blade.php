@@ -1,178 +1,165 @@
 <x-public-layout>
 
-<section
-    class="space-bg min-h-screen w-full flex items-center justify-center text-center px-6 text-white overflow-hidden relative"
-    x-data="typingHero()"
-    x-init="start()"
->
-    {{-- Semantic clarity for Google (invisible, no UI impact) --}}
-    <h2 class="sr-only">
-        Crevolio is a web-based collaboration platform where creators discover projects,
-        connect with project owners, and collaborate on real-world work.
-    </h2>
-
-    {{-- Background Layer --}}
-    <div class="stars-container"></div>
-    
-    {{-- Ornament Nebula --}}
-    <div class="absolute top-0 -left-20 w-96 h-96 bg-indigo-600/10 rounded-full blur-[150px]"></div>
-    <div class="absolute bottom-0 -right-20 w-96 h-96 bg-purple-600/10 rounded-full blur-[150px]"></div>
-
-    <div class="max-w-3xl w-full relative z-10 mt-10">
-        {{-- Badge --}}
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-[10px] font-bold tracking-[0.2em] uppercase mb-8">
-            <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-            </span>
-            Crevolio Ecosystem
+    {{-- SECTION 1: HERO --}}
+    <section class="min-h-screen w-full flex flex-col items-center justify-center text-center px-6 relative overflow-hidden" 
+             style="background-color: #05010d;">
+        
+        <div class="stars-container" style="z-index: 1;"></div>
+        
+        <div class="absolute inset-0" style="z-index: 2;">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-900/10 rounded-full blur-[150px]"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-indigo-900/10 rounded-full blur-[100px]"></div>
         </div>
 
-        <h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-gray-500">
-            <span x-text="displayText"></span>
-            <span class="border-r-4 border-indigo-500 animate-pulse ml-1"></span>
-        </h1>
+        <div class="max-w-5xl relative pt-20" style="z-index: 10;"> 
+            <h1 class="text-[32px] md:text-[48px] font-semibold leading-[1.2] tracking-tight text-white mb-4">
+                Don't build alone.<br>
+                Find the perfect collaborators<br>
+                for your projects
+            </h1>
+        </div>
 
-        {{-- Strengthened purpose sentence (still clean & aesthetic) --}}
-        <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-            Crevolio is a collaboration platform where developers, designers, and creators
-            discover projects, connect with project owners, and collaborate on real-world work.
-        </p>
+        <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent" style="z-index: 3;"></div>
+    </section>
 
-        <a href="{{ route('login') }}"
-           class="inline-block px-10 py-4 rounded-2xl bg-white text-black text-base font-black hover:bg-indigo-500 hover:text-white transition-all transform hover:scale-110 shadow-[0_0_30px_rgba(255,255,255,0.2)]">
-            Get Started
-        </a>
-    </div>
-</section>
-
-{{-- MAIN EXPLORE SECTION (ID: features) --}}
-<div id="features" class="bg-gray-50 py-24 relative scroll-mt-10">
-    <div class="max-w-7xl mx-auto px-6">
-        
-        {{-- SEARCH & FILTER BAR --}}
-        <div class="bg-white p-4 rounded-3xl border border-gray-100 mb-16 shadow-sm relative z-20">
-            <form action="{{ route('landing') }}" method="GET" class="flex flex-wrap items-center gap-4">
-                <div class="flex-1 min-w-[250px] relative">
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search for projects..."
-                        class="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-black">
-                    <div class="absolute left-3 top-3.5 text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
+    {{-- SECTION 2: TOP CREVOLIANS --}}
+    <section class="py-24" 
+             style="background: linear-gradient(to bottom, #000000 50%, #ffffff 50%);">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            {{-- Font Size 40 (text-[40px]), Medium (font-medium) --}}
+            <h2 class="text-[28px] md:text-[40px] font-medium mb-20 text-white relative" style="z-index: 10;">
+                Our Top Crevolians
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 relative" style="z-index: 20;">
+                @for ($i = 0; $i < 3; $i++)
+                <div class="bg-white rounded-[2rem] p-8 flex items-center gap-5 shadow-2xl transition-transform hover:scale-105 border border-gray-50">
+                    <div class="w-20 h-20 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
+                        <img src="https://ui-avatars.com/api/?name=User+{{ $i }}&background=random" class="w-full h-full object-cover">
+                    </div>
+                    <div class="text-left">
+                        <h4 class="text-black font-bold text-xl">Wahyu Heriyanto</h4>
+                        <p class="text-gray-500 text-base">Mobile App Developer</p>
                     </div>
                 </div>
-
-                <select name="field" class="bg-gray-50 border-none rounded-2xl text-sm py-3 px-4 focus:ring-2 focus:ring-black cursor-pointer">
-                    <option value="">All Fields</option>
-                    @isset($fields)
-                        @foreach($fields as $field)
-                            <option value="{{ $field->id }}" {{ request('field') == $field->id ? 'selected' : '' }}>{{ $field->name }}</option>
-                        @endforeach
-                    @endisset
-                </select>
-
-                <button type="submit" class="bg-black text-white px-8 py-3 rounded-2xl text-sm font-medium hover:bg-gray-800 transition">
-                    Search
-                </button>
-            </form>
+                @endfor
+            </div>
+            
+            <p class="text-black-400 text-[22px] mt-16 font-normal relative" style="z-index: 10;">
+                100+ Developers, Designers, and more roles are ready to join
+            </p>
         </div>
+    </section>
 
-        {{-- PROJECT GRID --}}
-        <div class="relative">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @forelse($projects as $project)
-                    <div class="relative bg-white rounded-[32px] p-5 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 group cursor-pointer"
-                         onclick="window.location.href='{{ route('login') }}'">
-                        
-                        {{-- Header --}}
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-3">
-                                <img src="{{ $project->owner->profile->photo_profile ? asset('storage/' . $project->owner->profile->photo_profile) : 'https://ui-avatars.com/api/?name='.urlencode($project->owner->name) }}" 
-                                     class="w-10 h-10 rounded-full object-cover">
-                                <div>
-                                    <span class="font-bold text-gray-900 text-sm block">{{ $project->owner->name }}</span>
-                                    <div class="text-[10px] text-gray-400 uppercase tracking-tight">{{ $project->created_at->diffForHumans() }}</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <div class="p-2 rounded-full text-gray-300 hover:text-indigo-600 transition-colors">
-                                    <i class="fa-regular fa-bookmark"></i>
-                                </div>
-                            </div>
+    {{-- SECTION 3: CREATE PROJECT CTA (Image 2 Bottom) --}}
+    <section class="pb-24 bg-white flex justify-center">
+        <a href="{{ route('login') }}" class="px-12 py-5 bg-black text-white text-xl font-bold rounded-full hover:scale-110 transition-transform shadow-2xl">
+            CREATE PROJECT
+        </a>
+    </section>
+
+    {{-- SECTION 4: DISCOVER PROJECTS (Image 3) --}}
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h3 class="text-2xl md:text-[40px] font-medium mb-4">Or do you want to join a project?</h3>
+                <h2 class="text-5xl md:text-[48px] font-black">Discover Projects</h2>
+            </div>
+
+            {{-- Grid Project --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @foreach($projects as $project)
+                <div class="border border-gray-200 rounded-[2.5rem] p-6 shadow-sm hover:shadow-xl transition-all group">
+                    {{-- Status & Type --}}
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="font-bold text-sm uppercase tracking-widest">OPEN <span class="text-gray-400 font-normal ml-2">Ends in 14 days</span></span>
+                        <span class="px-4 py-1 border border-black rounded-lg text-xs font-bold uppercase tracking-widest">
+                            {{ $project->detail->is_paid ? 'PAID' : 'VOLUNTEER' }}
+                        </span>
+                    </div>
+
+                    {{-- Title --}}
+                    <h3 class="text-2xl font-bold mb-6 leading-tight group-hover:text-indigo-600 transition">
+                        {{ $project->name }}
+                    </h3>
+
+                    {{-- Details --}}
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <p class="text-xs text-gray-400 font-bold uppercase mb-2 tracking-tighter">Looking for:</p>
+                            <ul class="text-sm font-medium space-y-1">
+                                <li>1 UI/UX Designer</li>
+                                <li>1 Technical Writer</li>
+                            </ul>
                         </div>
-
-                        {{-- Image & Tools --}}
-                        <div class="relative mb-4 overflow-hidden rounded-[24px] aspect-[16/9] bg-gray-50">
-                            <img src="{{ $project->medias->first() ? asset('storage/' . $project->medias->first()->url) : 'https://ui-avatars.com/api/?name='.urlencode($project->name).'&size=512' }}" 
-                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                            <div class="absolute bottom-3 left-3 flex flex-wrap gap-2">
-                                @foreach($project->detail->tools->take(2) as $projectTool)
-                                    <span class="bg-black/50 backdrop-blur-md text-white text-[9px] px-2.5 py-1 rounded-lg border border-white/20">
-                                        {{ $projectTool->tool->name }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        {{-- Title --}}
-                        <div class="mb-4">
-                            <h3 class="font-black text-lg text-gray-900 line-clamp-1 group-hover:text-indigo-600 transition">{{ $project->name }}</h3>
-                            <p class="text-gray-500 text-[11px] line-clamp-2 mt-1">{{ $project->detail->description }}</p>
-                        </div>
-
-                        {{-- Footer: Like & Collab --}}
-                        <div class="flex items-center justify-between border-t border-gray-50 pt-4">
-                            <div class="flex items-center gap-4">
-                                {{-- Like Button (Visual Only) --}}
-                                <div class="flex items-center gap-2 group/like">
-                                    <div class="w-9 h-9 rounded-full flex items-center justify-center bg-gray-50 text-gray-400 group-hover/like:bg-indigo-50 group-hover/like:text-indigo-600 transition-colors">
-                                        <i class="fa-solid fa-thumbs-up text-xs"></i>
-                                    </div>
-                                    <span class="text-xs font-black text-gray-600">{{ $project->likes_count }}</span>
+                        <div class="text-right">
+                             <div class="flex items-center gap-2 justify-end mb-4">
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
+                                    <i class="fa-solid fa-dollar-sign text-xs"></i>
                                 </div>
-
-                                {{-- Collaborators --}}
-                                <div class="flex -space-x-3 overflow-hidden">
-                                    @foreach($project->detail->collaborators->take(3) as $collab)
-                                        <img class="inline-block h-7 w-7 rounded-full ring-2 ring-white object-cover" 
-                                             src="{{ $collab->user->profile->photo_profile ? asset('storage/' . $collab->user->profile->photo_profile) : 'https://ui-avatars.com/api/?name='.urlencode($collab->user->name) }}">
-                                    @endforeach
-                                    @if($project->detail->collaborators->count() > 3)
-                                        <div class="flex items-center justify-center h-7 w-7 rounded-full bg-gray-900 text-[9px] font-bold text-white ring-2 ring-white">
-                                            +{{ $project->detail->collaborators->count() - 3 }}
-                                        </div>
-                                    @endif
+                                <div class="text-left">
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase">Start from</p>
+                                    <p class="text-sm font-bold">Rp1.000.000</p>
                                 </div>
-                            </div>
+                             </div>
                         </div>
                     </div>
-                @empty
-                    <div class="col-span-full text-center py-20 text-gray-400">No projects found.</div>
-                @endforelse
+
+                    <div class="flex items-center gap-3 border-t pt-6">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($project->owner->name) }}" class="w-8 h-8 rounded-full">
+                        <span class="text-sm font-bold text-gray-700">{{ $project->owner->name }}</span>
+                    </div>
+                </div>
+                @endforeach
             </div>
-
-            {{-- Fade Overlay --}}
-            <div class="absolute bottom-0 left-0 w-full h-80 bg-gradient-to-t from-gray-50 via-gray-50/90 to-transparent z-10 pointer-events-none"></div>
         </div>
+    </section>
 
-        {{-- CALL TO ACTION BOTTOM --}}
-        <div class="mt-16 text-center relative z-20">
-            <h3 class="text-3xl font-black text-gray-900 mb-4 tracking-tight">Want to see more projects?</h3>
-            <p class="text-gray-500 mb-10 max-w-lg mx-auto">Join our community to explore more projects, bookmark your favorites, and connect with creators.</p>
+    {{-- SECTION 5: FINAL CTA --}}
+    <section class="bg-black text-center">
+
+        {{-- Bagian atas tetap putih --}}
+        <div class="bg-white text-black pt-32 pb-32">
+            <h2 class="text-4xl md:text-[48px] font-semibold mb-5">
+                One Account,
+            </h2>
+            <h2 class="text-4xl md:text-[48px] font-semibold mb-16">
+                Endless Opportunities
+            </h2>
             
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <a href="{{ route('login') }}" class="group inline-flex items-center gap-3 px-10 py-4 bg-black text-white rounded-full font-bold hover:bg-indigo-600 hover:scale-105 transition-all duration-300">
-                    <span>Login for view more</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </a>
-                <a href="{{ route('register') }}" class="font-bold text-gray-900 hover:text-indigo-600 transition border-b-2 border-transparent hover:border-indigo-600 pb-1">Create an account</a>
+            <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="flex flex-col items-center">
+                    <div class="mb-6"><i class="fa-solid fa-right-to-bracket text-5xl"></i></div>
+                    <h4 class="text-2xl font-bold mb-2">Create Profile</h4>
+                    <p class="text-gray-500">Show your skills & roles</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="mb-6"><i class="fa-solid fa-rocket text-5xl"></i></div>
+                    <h4 class="text-2xl font-bold mb-2">Start Project</h4>
+                    <p class="text-gray-500">Find the best collaborators</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="mb-6"><i class="fa-solid fa-users text-5xl"></i></div>
+                    <h4 class="text-2xl font-bold mb-2">Join Project</h4>
+                    <p class="text-gray-500">Build your portfolio & network</p>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
+        {{-- Final Black Box --}}
+        <div class="w-full bg-black py-32 text-white">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">Be Crevolian Now!</h2>
+            <p class="text-xl text-gray-400 mb-12">Endless opportunities are waiting!</p>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="{{ route('register') }}" class="px-10 py-4 bg-white text-black font-bold rounded-full hover:scale-105 transition-all">
+                    CREATE ACCOUNT
+                </a>
+                <a href="{{ route('login') }}" class="px-10 py-4 border border-white text-white font-bold rounded-full hover:bg-white hover:text-black transition-all">
+                    LOGIN
+                </a>
+            </div>
+        </div>
+
+    </section>
 </x-public-layout>

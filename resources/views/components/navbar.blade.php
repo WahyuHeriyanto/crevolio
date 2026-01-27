@@ -1,34 +1,9 @@
-<nav class="w-full fixed top-0 z-50 bg-black/80 backdrop-blur border-b border-white/10">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-
-        {{-- LOGO --}}
-        <img
-            src="{{ asset('assets/logo/crevolio-white.png') }}"
-            alt="Crevolio"
-            class="h-6"
-        >
-
-        {{-- NAV --}}
-        <div class="flex items-center gap-8 text-sm">
-            <a href="#features"
-            class="text-sm text-gray-300 hover:text-white transition">
-                Features
-            </a>
-            <a href="{{ route('privacy.policy') }}"
-            class="text-gray-300 hover:text-white transition">
-                Privacy
-            </a>
-
-            <a href="{{ route('terms.of.service') }}"
-            class="text-gray-300 hover:text-white transition">
-                Terms
-            </a>
-            <a
-                href="{{ route('login') }}"
-                class="text-gray-300 hover:text-white transition"
-            >
-                Login
-            </a>
-        </div>
+<nav class="w-full fixed top-0 z-50 bg-transparent py-6">
+    <div class="max-w-7xl mx-auto px-10 flex items-center justify-between">
+        <img src="{{ asset('assets/logo/crevolio-white.png') }}" alt="Crevolio" class="h-8">
+        
+        <a href="{{ route('login') }}" class="px-8 py-2 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-black transition-all text-sm uppercase tracking-widest">
+            LOGIN
+        </a>
     </div>
 </nav>
